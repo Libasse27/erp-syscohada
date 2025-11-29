@@ -81,17 +81,30 @@ app.use('*', (req, res) => {
 app.use(errorHandler);
 
 // Démarrage du serveur
-app.listen(PORT, () => {
-  logger.info(`🚀 Serveur démarré sur le port ${PORT}`);
-  logger.info(`📊 Environnement: ${process.env.NODE_ENV}`);
-  logger.info(`🌍 URL: http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  logger.info(
+    `✅ Serveur démarré en mode ${process.env.NODE_ENV} sur le port ${PORT}`
+  );
 });
 
-// Gestion des erreurs non capturées
-process.on('unhandledRejection', (err) => {
-  logger.error('❌ UNHANDLED REJECTION! Arrêt du serveur...');
-  logger.error(err);
-  process.exit(1);
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    const newPort = Number(PORT) + 1;
+    logger.warn(`Le port ${PORT} est déjà utilisé, tentative sur le port ${newPort}`);
+    app.listen(newPort, () => {
+      logger.info(
+        `✅ Serveur démarré en mode ${process.env.NODE_ENV} sur le port ${newPort}`
+      );
+    });
+  } else {
+    logger.error(err);
+  }
+});
+
+process.on('unhandledRejection', (err, promise) => {
+  logger.error(`❌ ERREUR: ${err.message}`);
+  // Fermer le serveur et quitter le processus
+  server.close(() => process.exit(1));
 });
 
 process.on('uncaughtException', (err) => {
@@ -101,3 +114,4 @@ process.on('uncaughtException', (err) => {
 });
 
 export default app;
+

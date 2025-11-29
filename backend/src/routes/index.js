@@ -32,7 +32,7 @@ router.get('/', (req, res) => {
 });
 
 // Import des routes (à décommenter au fur et à mesure du développement)
-// import authRoutes from './authRoutes.js';
+import authRoutes from './authRoutes.js';
 // import userRoutes from './userRoutes.js';
 // import productRoutes from './productRoutes.js';
 // import customerRoutes from './customerRoutes.js';
@@ -47,7 +47,7 @@ router.get('/', (req, res) => {
 // import dashboardRoutes from './dashboardRoutes.js';
 
 // Utilisation des routes (à décommenter au fur et à mesure)
-// router.use('/auth', authRoutes);
+router.use('/auth', authRoutes);
 // router.use('/users', userRoutes);
 // router.use('/products', productRoutes);
 // router.use('/customers', customerRoutes);

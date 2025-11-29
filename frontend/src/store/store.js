@@ -5,7 +5,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 // Import des slices (à décommenter au fur et à mesure)
-// import authReducer from './slices/authSlice';
+import authReducer from './slices/authSlice';
 // import productReducer from './slices/productSlice';
 // import invoiceReducer from './slices/invoiceSlice';
 // import customerReducer from './slices/customerSlice';
@@ -13,7 +13,7 @@ import { configureStore } from '@reduxjs/toolkit';
 
 const store = configureStore({
   reducer: {
-    // auth: authReducer,
+    auth: authReducer,
     // products: productReducer,
     // invoices: invoiceReducer,
     // customers: customerReducer,
