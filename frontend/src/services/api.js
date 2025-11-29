@@ -5,12 +5,14 @@
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-// URL de base de l'API
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// URL de base de l'API (Vite utilise import.meta.env au lieu de process.env)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_TIMEOUT = import.meta.env.VITE_API_TIMEOUT || 30000;
 
 // Instance Axios
 const api = axios.create({
   baseURL: API_URL,
+  timeout: API_TIMEOUT,
   headers: {
     'Content-Type': 'application/json',
   },
