@@ -1,0 +1,27 @@
+# Dockerfile pour le Backend Node.js/Express
+
+FROM node:18-alpine
+
+# Créer le répertoire de l'application
+WORKDIR /app
+
+# Copier les fichiers package.json et package-lock.json
+COPY backend/package*.json ./
+
+# Installer les dépendances
+RUN npm ci --only=production
+
+# Copier le code source
+COPY backend/ .
+
+# Créer les dossiers nécessaires
+RUN mkdir -p logs uploads/invoices uploads/products uploads/documents
+
+# Exposer le port
+EXPOSE 5000
+
+# Variables d'environnement par défaut
+ENV NODE_ENV=production
+
+# Démarrer l'application
+CMD ["node", "server.js"]
