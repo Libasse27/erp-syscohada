@@ -102,7 +102,7 @@ const userSchema = new mongoose.Schema(
 );
 
 // Index pour améliorer les performances
-userSchema.index({ email: 1 });
+// Note: email index déjà créé via { unique: true } dans le schéma
 userSchema.index({ role: 1 });
 userSchema.index({ company: 1 });
 userSchema.index({ isActive: 1 });
