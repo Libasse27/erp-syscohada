@@ -27,7 +27,7 @@ export const protect = async (req, res, next) => {
 
     try {
       // Vérifier et décoder le token
-      const decoded = jwt.verify(token, jwtConfig.access.secret);
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
       // Récupérer l'utilisateur (sans le mot de passe)
       const user = await User.findById(decoded.id).select('-password');

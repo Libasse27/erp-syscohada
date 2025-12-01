@@ -22,8 +22,8 @@ import {
  * Générer un Access Token JWT
  */
 const generateAccessToken = (userId) => {
-  return jwt.sign({ id: userId }, jwtConfig.access.secret, {
-    expiresIn: jwtConfig.access.expiresIn,
+  return jwt.sign({ id: userId }, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRE || '15m',
   });
 };
 
@@ -31,8 +31,8 @@ const generateAccessToken = (userId) => {
  * Générer un Refresh Token JWT
  */
 const generateRefreshToken = (userId) => {
-  return jwt.sign({ id: userId }, jwtConfig.refresh.secret, {
-    expiresIn: jwtConfig.refresh.expiresIn,
+  return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d',
   });
 };
 
@@ -171,7 +171,7 @@ export const refreshToken = async (req, res, next) => {
     // Vérifier le refresh token
     let decoded;
     try {
-      decoded = jwt.verify(refreshToken, jwtConfig.refresh.secret);
+      decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     } catch (error) {
       return next(new AppError('Refresh token invalide ou expiré', 401));
     }

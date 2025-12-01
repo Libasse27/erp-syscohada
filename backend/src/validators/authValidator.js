@@ -55,10 +55,9 @@ export const registerSchema = Joi.object({
 
   confirmPassword: Joi.string()
     .valid(Joi.ref('password'))
-    .required()
+    .optional()
     .messages({
       'any.only': 'Les mots de passe ne correspondent pas',
-      'any.required': 'La confirmation du mot de passe est requise',
     }),
 
   phone: Joi.string()
@@ -98,6 +97,10 @@ export const loginSchema = Joi.object({
       'string.empty': 'Le mot de passe est requis',
       'any.required': 'Le mot de passe est requis',
     }),
+
+  rememberMe: Joi.boolean()
+    .optional()
+    .default(false),
 });
 
 // Schéma de validation pour le mot de passe oublié
