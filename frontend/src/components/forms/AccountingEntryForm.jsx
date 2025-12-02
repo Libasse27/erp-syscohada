@@ -265,7 +265,7 @@ const AccountingEntryForm = ({ entry, onSubmit, onCancel, isLoading = false }) =
           loading={isLoading || form.isSubmitting}
           disabled={lines.length === 0 || !isBalanced || !form.isValid || isLoading}
         >
-          {entry ? 'Mettre à jour' : 'Enregistrer l'écriture'}
+          {entry ? 'Mettre à jour' : 'Enregistrer l\'écriture'}
         </Button>
       </div>
     </form>
