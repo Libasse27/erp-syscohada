@@ -18,27 +18,27 @@ import Dashboard from './pages/Dashboard/Dashboard';
 
 // Pages Ventes
 import CustomerList from './pages/Sales/CustomerList';
-import CustomerCreate from './pages/Sales/CustomerCreate';
+import CustomerDetail from './pages/Sales/CustomerDetail';
 import QuoteList from './pages/Sales/QuoteList';
 import QuoteCreate from './pages/Sales/QuoteCreate';
 import InvoiceList from './pages/Sales/InvoiceList';
 import InvoiceCreate from './pages/Sales/InvoiceCreate';
+import InvoiceDetail from './pages/Sales/InvoiceDetail';
 
 // Pages Achats
 import SupplierList from './pages/Purchases/SupplierList';
-import SupplierCreate from './pages/Purchases/SupplierCreate';
+import SupplierDetail from './pages/Purchases/SupplierDetail';
 import PurchaseOrderList from './pages/Purchases/PurchaseOrderList';
 import PurchaseOrderCreate from './pages/Purchases/PurchaseOrderCreate';
-import BillList from './pages/Purchases/BillList';
-import BillCreate from './pages/Purchases/BillCreate';
+import PurchaseOrderDetail from './pages/Purchases/PurchaseOrderDetail';
 
 // Pages Stock
 import ProductList from './pages/Inventory/ProductList';
 import ProductCreate from './pages/Inventory/ProductCreate';
+import ProductDetail from './pages/Inventory/ProductDetail';
 import StockMovementList from './pages/Inventory/StockMovementList';
-import StockMovementCreate from './pages/Inventory/StockMovementCreate';
-import InventoryList from './pages/Inventory/InventoryList';
-import InventoryCreate from './pages/Inventory/InventoryCreate';
+import CategoryList from './pages/Inventory/CategoryList';
+import InventoryReport from './pages/Inventory/InventoryReport';
 
 // Pages Comptabilité
 import AccountList from './pages/Accounting/AccountList';
@@ -95,8 +95,7 @@ function App() {
           {/* Ventes */}
           <Route path="/dashboard/sales">
             <Route path="customers" element={<CustomerList />} />
-            <Route path="customers/new" element={<CustomerCreate />} />
-            <Route path="customers/:id/edit" element={<CustomerCreate />} />
+            <Route path="customers/:id" element={<CustomerDetail />} />
 
             <Route path="quotes" element={<QuoteList />} />
             <Route path="quotes/new" element={<QuoteCreate />} />
@@ -104,36 +103,31 @@ function App() {
 
             <Route path="invoices" element={<InvoiceList />} />
             <Route path="invoices/new" element={<InvoiceCreate />} />
+            <Route path="invoices/:id" element={<InvoiceDetail />} />
             <Route path="invoices/:id/edit" element={<InvoiceCreate />} />
           </Route>
 
           {/* Achats */}
           <Route path="/dashboard/purchases">
             <Route path="suppliers" element={<SupplierList />} />
-            <Route path="suppliers/new" element={<SupplierCreate />} />
-            <Route path="suppliers/:id/edit" element={<SupplierCreate />} />
+            <Route path="suppliers/:id" element={<SupplierDetail />} />
 
             <Route path="orders" element={<PurchaseOrderList />} />
             <Route path="orders/new" element={<PurchaseOrderCreate />} />
+            <Route path="orders/:id" element={<PurchaseOrderDetail />} />
             <Route path="orders/:id/edit" element={<PurchaseOrderCreate />} />
-
-            <Route path="bills" element={<BillList />} />
-            <Route path="bills/new" element={<BillCreate />} />
-            <Route path="bills/:id/edit" element={<BillCreate />} />
           </Route>
 
           {/* Stock */}
           <Route path="/dashboard/inventory">
             <Route path="products" element={<ProductList />} />
             <Route path="products/new" element={<ProductCreate />} />
+            <Route path="products/:id" element={<ProductDetail />} />
             <Route path="products/:id/edit" element={<ProductCreate />} />
 
             <Route path="movements" element={<StockMovementList />} />
-            <Route path="movements/new" element={<StockMovementCreate />} />
-
-            <Route path="inventories" element={<InventoryList />} />
-            <Route path="inventories/new" element={<InventoryCreate />} />
-            <Route path="inventories/:id/edit" element={<InventoryCreate />} />
+            <Route path="categories" element={<CategoryList />} />
+            <Route path="report" element={<InventoryReport />} />
           </Route>
 
           {/* Comptabilité */}
