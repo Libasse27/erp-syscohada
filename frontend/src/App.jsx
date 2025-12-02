@@ -10,77 +10,64 @@ import MainLayout from './components/layout/MainLayout';
 import { selectIsAuthenticated } from './store/slices/authSlice';
 
 // Pages d'authentification
-import { Login, Register } from './pages/Auth';
+import Login from './pages/Auth/Login';
+import Register from './pages/Auth/Register';
 
 // Pages Dashboard
 import Dashboard from './pages/Dashboard/Dashboard';
 
 // Pages Ventes
-import {
-  CustomerList,
-  CustomerCreate,
-  QuoteList,
-  QuoteCreate,
-  InvoiceList,
-  InvoiceCreate,
-} from './pages/Sales';
+import CustomerList from './pages/Sales/CustomerList';
+import CustomerCreate from './pages/Sales/CustomerCreate';
+import QuoteList from './pages/Sales/QuoteList';
+import QuoteCreate from './pages/Sales/QuoteCreate';
+import InvoiceList from './pages/Sales/InvoiceList';
+import InvoiceCreate from './pages/Sales/InvoiceCreate';
 
 // Pages Achats
-import {
-  SupplierList,
-  SupplierCreate,
-  PurchaseOrderList,
-  PurchaseOrderCreate,
-  BillList,
-  BillCreate,
-} from './pages/Purchases';
+import SupplierList from './pages/Purchases/SupplierList';
+import SupplierCreate from './pages/Purchases/SupplierCreate';
+import PurchaseOrderList from './pages/Purchases/PurchaseOrderList';
+import PurchaseOrderCreate from './pages/Purchases/PurchaseOrderCreate';
+import BillList from './pages/Purchases/BillList';
+import BillCreate from './pages/Purchases/BillCreate';
 
 // Pages Stock
-import {
-  ProductList,
-  ProductCreate,
-  StockMovementList,
-  StockMovementCreate,
-  InventoryList,
-  InventoryCreate,
-} from './pages/Inventory';
+import ProductList from './pages/Inventory/ProductList';
+import ProductCreate from './pages/Inventory/ProductCreate';
+import StockMovementList from './pages/Inventory/StockMovementList';
+import StockMovementCreate from './pages/Inventory/StockMovementCreate';
+import InventoryList from './pages/Inventory/InventoryList';
+import InventoryCreate from './pages/Inventory/InventoryCreate';
 
 // Pages Comptabilité
-import {
-  AccountList,
-  AccountingEntryList,
-  AccountingEntryCreate,
-  JournalList,
-  GeneralLedger,
-  TrialBalance,
-} from './pages/Accounting';
+import AccountList from './pages/Accounting/AccountList';
+import AccountingEntryList from './pages/Accounting/AccountingEntryList';
+import AccountingEntryCreate from './pages/Accounting/AccountingEntryCreate';
+import JournalList from './pages/Accounting/JournalList';
+import GeneralLedger from './pages/Accounting/GeneralLedger';
+import TrialBalance from './pages/Accounting/TrialBalance';
 
 // Pages Trésorerie
-import {
-  PaymentList,
-  PaymentCreate,
-  BankAccountList,
-  CashFlow,
-} from './pages/Treasury';
+import PaymentList from './pages/Treasury/PaymentList';
+import PaymentCreate from './pages/Treasury/PaymentCreate';
+import BankAccountList from './pages/Treasury/BankAccountList';
+import CashFlow from './pages/Treasury/CashFlow';
 
 // Pages Rapports
-import {
-  FinancialReports,
-  SalesReports,
-  PurchaseReports,
-  StockReports,
-  VATReport,
-  BalanceSheet,
-  IncomeStatement,
-} from './pages/Reports';
+import FinancialReports from './pages/Reports/FinancialReports';
+import SalesReports from './pages/Reports/SalesReports';
+import PurchaseReports from './pages/Reports/PurchaseReports';
+import StockReports from './pages/Reports/StockReports';
+import VATReport from './pages/Reports/VATReport';
+import BalanceSheet from './pages/Reports/BalanceSheet';
+import IncomeStatement from './pages/Reports/IncomeStatement';
 
 // Pages Paramètres
-import {
-  CompanySettings,
-  UserSettings,
-  SystemSettings,
-  FiscalYearSettings,
-} from './pages/Settings';
+import CompanySettings from './pages/Settings/CompanySettings';
+import UserSettings from './pages/Settings/UserSettings';
+import SystemSettings from './pages/Settings/SystemSettings';
+import FiscalYearSettings from './pages/Settings/FiscalYearSettings';
 
 function App() {
   const isAuthenticated = useSelector(selectIsAuthenticated);
