@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const createAccountValidator = Joi.object({
+export const createAccountSchema = Joi.object({
   code: Joi.string()
     .pattern(/^[1-8][0-9]{6}$/)
     .required()
@@ -40,7 +40,7 @@ export const createAccountValidator = Joi.object({
   isGroup: Joi.boolean().default(false),
 });
 
-export const updateAccountValidator = Joi.object({
+export const updateAccountSchema = Joi.object({
   label: Joi.string().min(3).max(200),
   description: Joi.string().allow(''),
   parent: Joi.string().allow(null),

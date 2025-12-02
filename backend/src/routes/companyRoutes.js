@@ -9,10 +9,10 @@ import {
   getSettings,
   updateSettings,
 } from '../controllers/companyController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { updateCompanyValidator } from '../validators/companyValidator.js';
+import { updateCompanySchema } from '../validators/companyValidator.js';
 
 const router = express.Router();
 
@@ -21,7 +21,7 @@ router.use(authenticate);
 
 // Informations de l'entreprise
 router.get('/', getCompany);
-router.put('/', authorize(['admin']), validateBody(updateCompanyValidator), updateCompany);
+router.put('/', authorize(['admin']), validateBody(updateCompanySchema), updateCompany);
 
 // Paramètres
 router.get('/settings', getSettings);

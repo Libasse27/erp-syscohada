@@ -13,10 +13,10 @@ import {
   verifyMobileMoney,
   getPaymentStats,
 } from '../controllers/paymentController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createPaymentValidator, updatePaymentValidator } from '../validators/paymentValidator.js';
+import { createPaymentSchema, updatePaymentSchema } from '../validators/paymentValidator.js';
 
 const router = express.Router();
 
@@ -33,8 +33,8 @@ router.post('/mobile-money/verify', verifyMobileMoney);
 // CRUD
 router.get('/', getPayments);
 router.get('/:id', getPaymentById);
-router.post('/', authorize(['admin', 'manager', 'sales', 'accountant']), validateBody(createPaymentValidator), createPayment);
-router.put('/:id', authorize(['admin', 'manager', 'accountant']), validateBody(updatePaymentValidator), updatePayment);
+router.post('/', authorize(['admin', 'manager', 'sales', 'accountant']), validateBody(createPaymentSchema), createPayment);
+router.put('/:id', authorize(['admin', 'manager', 'accountant']), validateBody(updatePaymentSchema), updatePayment);
 router.post('/:id/cancel', authorize(['admin', 'manager']), cancelPayment);
 
 export default router;

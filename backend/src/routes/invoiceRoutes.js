@@ -13,10 +13,10 @@ import {
   getOverdueInvoices,
   getInvoiceStats,
 } from '../controllers/invoiceController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createInvoiceValidator, updateInvoiceValidator } from '../validators/invoiceValidator.js';
+import { createInvoiceSchema, updateInvoiceSchema } from '../validators/invoiceValidator.js';
 
 const router = express.Router();
 
@@ -30,8 +30,8 @@ router.get('/overdue', getOverdueInvoices);
 // CRUD
 router.get('/', getInvoices);
 router.get('/:id', getInvoiceById);
-router.post('/', authorize(['admin', 'manager', 'sales']), validateBody(createInvoiceValidator), createInvoice);
-router.put('/:id', authorize(['admin', 'manager', 'sales']), validateBody(updateInvoiceValidator), updateInvoice);
+router.post('/', authorize(['admin', 'manager', 'sales']), validateBody(createInvoiceSchema), createInvoice);
+router.put('/:id', authorize(['admin', 'manager', 'sales']), validateBody(updateInvoiceSchema), updateInvoice);
 router.delete('/:id', authorize(['admin', 'manager']), deleteInvoice);
 
 // Actions

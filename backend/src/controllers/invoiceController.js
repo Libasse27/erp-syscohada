@@ -6,7 +6,7 @@ import Invoice from '../models/Invoice.js';
 import { AppError } from '../middlewares/errorMiddleware.js';
 import { formatPaginatedResponse, getPaginationParams } from '../utils/helpers.js';
 import { generateInvoiceNumber } from '../utils/invoiceNumberGenerator.js';
-import { generateAccountingEntries } from '../services/accountingService.js';
+import { createSaleEntry, createPurchaseEntry } from '../services/accountingService.js';
 import { recordStockOut } from '../services/stockService.js';
 
 export const getInvoices = async (req, res, next) => {
@@ -98,7 +98,7 @@ export const createInvoice = async (req, res, next) => {
 
     // Générer les écritures comptables si configuré
     if (invoice.status !== 'draft') {
-      await generateAccountingEntries(invoice, 'invoice');
+      await (invoice.type === 'sale' ? createSaleEntry(invoice, req.user.id) : createPurchaseEntry(invoice, req.user.id));
     }
 
     const populatedInvoice = await Invoice.findById(invoice._id)
@@ -187,7 +187,7 @@ export const validateInvoice = async (req, res, next) => {
     await invoice.save();
 
     // Générer les écritures comptables
-    await generateAccountingEntries(invoice, 'invoice');
+    await (invoice.type === 'sale' ? createSaleEntry(invoice, req.user.id) : createPurchaseEntry(invoice, req.user.id));
 
     res.json({
       success: true,

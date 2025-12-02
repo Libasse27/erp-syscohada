@@ -43,7 +43,7 @@ const lineSchema = Joi.object({
     'custom.bothAmounts': 'Une ligne ne peut pas avoir à la fois débit et crédit',
   });
 
-export const createAccountingEntryValidator = Joi.object({
+export const createAccountingEntrySchema = Joi.object({
   journal: Joi.string()
     .required()
     .messages({
@@ -90,7 +90,7 @@ export const createAccountingEntryValidator = Joi.object({
   status: Joi.string().valid('draft', 'validated').default('draft'),
 });
 
-export const updateAccountingEntryValidator = Joi.object({
+export const updateAccountingEntrySchema = Joi.object({
   date: Joi.date(),
   reference: Joi.string().allow(''),
   description: Joi.string(),

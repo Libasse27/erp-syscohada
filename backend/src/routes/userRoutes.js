@@ -12,10 +12,10 @@ import {
   getProfile,
   updateProfile,
 } from '../controllers/userController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createUserValidator, updateUserValidator } from '../validators/userValidator.js';
+import { createUserSchema, updateUserSchema } from '../validators/userValidator.js';
 
 const router = express.Router();
 
@@ -29,8 +29,8 @@ router.put('/profile', updateProfile);
 // Gestion des utilisateurs (admin/manager uniquement)
 router.get('/', authorize(['admin', 'manager']), getUsers);
 router.get('/:id', authorize(['admin', 'manager']), getUserById);
-router.post('/', authorize(['admin']), validateBody(createUserValidator), createUser);
-router.put('/:id', authorize(['admin', 'manager']), validateBody(updateUserValidator), updateUser);
+router.post('/', authorize(['admin']), validateBody(createUserSchema), createUser);
+router.put('/:id', authorize(['admin', 'manager']), validateBody(updateUserSchema), updateUser);
 router.delete('/:id', authorize(['admin']), deleteUser);
 
 export default router;

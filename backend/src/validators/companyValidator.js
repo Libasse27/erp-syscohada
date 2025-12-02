@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const updateCompanyValidator = Joi.object({
+export const updateCompanySchema = Joi.object({
   name: Joi.string().min(2).max(100),
   legalForm: Joi.string().valid(
     'SARL',

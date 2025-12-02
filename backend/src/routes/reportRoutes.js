@@ -15,8 +15,8 @@ import {
   exportPaymentsExcel,
   exportProductsExcel,
 } from '../controllers/reportController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

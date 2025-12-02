@@ -14,7 +14,7 @@ import {
   getSalesChart,
   getStats,
 } from '../controllers/dashboardController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 

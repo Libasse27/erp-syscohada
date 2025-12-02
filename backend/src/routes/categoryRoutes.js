@@ -11,10 +11,10 @@ import {
   updateCategory,
   deleteCategory,
 } from '../controllers/categoryController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createCategoryValidator, updateCategoryValidator } from '../validators/categoryValidator.js';
+import { createCategorySchema, updateCategorySchema } from '../validators/categoryValidator.js';
 
 const router = express.Router();
 
@@ -27,8 +27,8 @@ router.get('/root', getRootCategories);
 router.get('/:id', getCategoryById);
 
 // Écriture (admin/manager uniquement)
-router.post('/', authorize(['admin', 'manager']), validateBody(createCategoryValidator), createCategory);
-router.put('/:id', authorize(['admin', 'manager']), validateBody(updateCategoryValidator), updateCategory);
+router.post('/', authorize(['admin', 'manager']), validateBody(createCategorySchema), createCategory);
+router.put('/:id', authorize(['admin', 'manager']), validateBody(updateCategorySchema), updateCategory);
 router.delete('/:id', authorize(['admin']), deleteCategory);
 
 export default router;

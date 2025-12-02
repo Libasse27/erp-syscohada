@@ -11,10 +11,10 @@ import {
   deleteProduct,
   adjustProductStock,
 } from '../controllers/productController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createProductValidator, updateProductValidator } from '../validators/productValidator.js';
+import { createProductSchema, updateProductSchema } from '../validators/productValidator.js';
 
 const router = express.Router();
 
@@ -26,8 +26,8 @@ router.get('/', getProducts);
 router.get('/:id', getProductById);
 
 // Écriture (admin/manager uniquement)
-router.post('/', authorize(['admin', 'manager']), validateBody(createProductValidator), createProduct);
-router.put('/:id', authorize(['admin', 'manager']), validateBody(updateProductValidator), updateProduct);
+router.post('/', authorize(['admin', 'manager']), validateBody(createProductSchema), createProduct);
+router.put('/:id', authorize(['admin', 'manager']), validateBody(updateProductSchema), updateProduct);
 router.delete('/:id', authorize(['admin']), deleteProduct);
 
 // Ajustement stock

@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const createSupplierValidator = Joi.object({
+export const createSupplierSchema = Joi.object({
   name: Joi.string()
     .min(2)
     .max(200)
@@ -34,7 +34,7 @@ export const createSupplierValidator = Joi.object({
   }),
 });
 
-export const updateSupplierValidator = Joi.object({
+export const updateSupplierSchema = Joi.object({
   name: Joi.string().min(2).max(200),
   email: Joi.string().email(),
   phone: Joi.string(),

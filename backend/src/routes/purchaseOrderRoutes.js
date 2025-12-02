@@ -12,10 +12,10 @@ import {
   receivePurchaseOrder,
   validatePurchaseOrder,
 } from '../controllers/purchaseOrderController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createPurchaseOrderValidator, updatePurchaseOrderValidator } from '../validators/purchaseOrderValidator.js';
+import { createPurchaseOrderSchema, updatePurchaseOrderSchema } from '../validators/purchaseOrderValidator.js';
 
 const router = express.Router();
 
@@ -25,8 +25,8 @@ router.use(authenticate);
 // CRUD
 router.get('/', getPurchaseOrders);
 router.get('/:id', getPurchaseOrderById);
-router.post('/', authorize(['admin', 'manager']), validateBody(createPurchaseOrderValidator), createPurchaseOrder);
-router.put('/:id', authorize(['admin', 'manager']), validateBody(updatePurchaseOrderValidator), updatePurchaseOrder);
+router.post('/', authorize(['admin', 'manager']), validateBody(createPurchaseOrderSchema), createPurchaseOrder);
+router.put('/:id', authorize(['admin', 'manager']), validateBody(updatePurchaseOrderSchema), updatePurchaseOrder);
 router.delete('/:id', authorize(['admin', 'manager']), deletePurchaseOrder);
 
 // Actions

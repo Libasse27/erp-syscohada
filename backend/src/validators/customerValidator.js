@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const createCustomerValidator = Joi.object({
+export const createCustomerSchema = Joi.object({
   type: Joi.string()
     .valid('individual', 'company')
     .required()
@@ -42,7 +42,7 @@ export const createCustomerValidator = Joi.object({
   taxExempt: Joi.boolean().default(false),
 });
 
-export const updateCustomerValidator = Joi.object({
+export const updateCustomerSchema = Joi.object({
   type: Joi.string().valid('individual', 'company'),
   firstName: Joi.string(),
   lastName: Joi.string(),

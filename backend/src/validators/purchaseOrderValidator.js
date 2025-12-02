@@ -29,7 +29,7 @@ const itemSchema = Joi.object({
   discount: Joi.number().min(0).default(0),
 });
 
-export const createPurchaseOrderValidator = Joi.object({
+export const createPurchaseOrderSchema = Joi.object({
   supplier: Joi.string()
     .required()
     .messages({
@@ -50,7 +50,7 @@ export const createPurchaseOrderValidator = Joi.object({
   reference: Joi.string().allow(''),
 });
 
-export const updatePurchaseOrderValidator = Joi.object({
+export const updatePurchaseOrderSchema = Joi.object({
   supplier: Joi.string(),
   orderDate: Joi.date(),
   expectedDate: Joi.date(),

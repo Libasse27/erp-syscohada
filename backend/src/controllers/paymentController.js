@@ -8,7 +8,7 @@ import { AppError } from '../middlewares/errorMiddleware.js';
 import { formatPaginatedResponse, getPaginationParams } from '../utils/helpers.js';
 import { generatePaymentNumber } from '../utils/invoiceNumberGenerator.js';
 import { initiateMobileMoneyPayment, verifyMobileMoneyPayment } from '../services/mobileMoneyService.js';
-import { generateAccountingEntries } from '../services/accountingService.js';
+import { createPaymentEntry } from '../services/accountingService.js';
 
 export const getPayments = async (req, res, next) => {
   try {
@@ -108,7 +108,7 @@ export const createPayment = async (req, res, next) => {
       await invoice.save();
 
       // Générer les écritures comptables
-      await generateAccountingEntries(payment, 'payment');
+      await createPaymentEntry(payment, req.user.id);
     }
 
     const populatedPayment = await Payment.findById(payment._id)

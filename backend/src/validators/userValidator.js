@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const createUserValidator = Joi.object({
+export const createUserSchema = Joi.object({
   email: Joi.string()
     .email()
     .required()
@@ -36,7 +36,7 @@ export const createUserValidator = Joi.object({
   phone: Joi.string().allow(''),
 });
 
-export const updateUserValidator = Joi.object({
+export const updateUserSchema = Joi.object({
   firstName: Joi.string(),
   lastName: Joi.string(),
   role: Joi.string().valid('admin', 'manager', 'accountant', 'sales', 'user'),

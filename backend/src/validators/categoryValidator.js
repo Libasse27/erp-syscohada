@@ -4,7 +4,7 @@
 
 import Joi from 'joi';
 
-export const createCategoryValidator = Joi.object({
+export const createCategorySchema = Joi.object({
   name: Joi.string()
     .min(2)
     .max(100)
@@ -25,7 +25,7 @@ export const createCategoryValidator = Joi.object({
   image: Joi.string().uri().allow(''),
 });
 
-export const updateCategoryValidator = Joi.object({
+export const updateCategorySchema = Joi.object({
   name: Joi.string().min(2).max(100),
   description: Joi.string().allow(''),
   type: Joi.string().valid('product', 'service'),

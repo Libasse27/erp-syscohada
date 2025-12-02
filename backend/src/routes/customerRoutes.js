@@ -11,10 +11,10 @@ import {
   deleteCustomer,
   getTopCustomers,
 } from '../controllers/customerController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createCustomerValidator, updateCustomerValidator } from '../validators/customerValidator.js';
+import { createCustomerSchema, updateCustomerSchema } from '../validators/customerValidator.js';
 
 const router = express.Router();
 
@@ -27,8 +27,8 @@ router.get('/top', getTopCustomers);
 // CRUD
 router.get('/', getCustomers);
 router.get('/:id', getCustomerById);
-router.post('/', authorize(['admin', 'manager', 'sales']), validateBody(createCustomerValidator), createCustomer);
-router.put('/:id', authorize(['admin', 'manager', 'sales']), validateBody(updateCustomerValidator), updateCustomer);
+router.post('/', authorize(['admin', 'manager', 'sales']), validateBody(createCustomerSchema), createCustomer);
+router.put('/:id', authorize(['admin', 'manager', 'sales']), validateBody(updateCustomerSchema), updateCustomer);
 router.delete('/:id', authorize(['admin', 'manager']), deleteCustomer);
 
 export default router;

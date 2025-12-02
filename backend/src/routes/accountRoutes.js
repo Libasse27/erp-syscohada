@@ -13,10 +13,10 @@ import {
   getAccountBalance,
   getAccountsByClassNumber,
 } from '../controllers/accountController.js';
-import { authenticate } from '../middlewares/authMiddleware.js';
-import { authorize } from '../middlewares/authMiddleware.js';
+import { protect as authenticate } from '../middlewares/authMiddleware.js';
+import { restrictTo as authorize } from '../middlewares/authMiddleware.js';
 import { validateBody } from '../middlewares/validationMiddleware.js';
-import { createAccountValidator, updateAccountValidator } from '../validators/accountValidator.js';
+import { createAccountSchema, updateAccountSchema } from '../validators/accountValidator.js';
 
 const router = express.Router();
 
@@ -31,8 +31,8 @@ router.get('/:id', getAccountById);
 router.get('/:id/balance', getAccountBalance);
 
 // Écriture (admin/accountant uniquement)
-router.post('/', authorize(['admin', 'accountant']), validateBody(createAccountValidator), createAccount);
-router.put('/:id', authorize(['admin', 'accountant']), validateBody(updateAccountValidator), updateAccount);
+router.post('/', authorize(['admin', 'accountant']), validateBody(createAccountSchema), createAccount);
+router.put('/:id', authorize(['admin', 'accountant']), validateBody(updateAccountSchema), updateAccount);
 router.delete('/:id', authorize(['admin']), deleteAccount);
 
 export default router;
