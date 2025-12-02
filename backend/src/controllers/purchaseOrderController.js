@@ -5,7 +5,7 @@
 import PurchaseOrder from '../models/PurchaseOrder.js';
 import { AppError } from '../middlewares/errorMiddleware.js';
 import { formatPaginatedResponse, getPaginationParams } from '../utils/helpers.js';
-import { generatePurchaseOrderNumber } from '../utils/invoiceNumberGenerator.js';
+import { generateOrderNumber } from '../utils/invoiceNumberGenerator.js';
 import { recordStockIn } from '../services/stockService.js';
 
 export const getPurchaseOrders = async (req, res, next) => {
@@ -66,7 +66,7 @@ export const createPurchaseOrder = async (req, res, next) => {
   try {
     // Générer le numéro de bon de commande
     const count = await PurchaseOrder.countDocuments({ company: req.user.company });
-    const number = generatePurchaseOrderNumber(count + 1);
+    const number = generateOrderNumber(count + 1);
 
     const order = await PurchaseOrder.create({
       ...req.body,

@@ -6,8 +6,8 @@ import Payment from '../models/Payment.js';
 import Invoice from '../models/Invoice.js';
 import { AppError } from '../middlewares/errorMiddleware.js';
 import { formatPaginatedResponse, getPaginationParams } from '../utils/helpers.js';
-import { generatePaymentNumber } from '../utils/invoiceNumberGenerator.js';
-import { initiateMobileMoneyPayment, verifyMobileMoneyPayment } from '../services/mobileMoneyService.js';
+import { generateTransactionNumber } from '../utils/invoiceNumberGenerator.js';
+import { initiateMobileMoneyPayment, checkMobileMoneyPaymentStatus } from '../services/mobileMoneyService.js';
 import { createPaymentEntry } from '../services/accountingService.js';
 
 export const getPayments = async (req, res, next) => {
@@ -83,7 +83,7 @@ export const createPayment = async (req, res, next) => {
 
     // Générer le numéro de paiement
     const count = await Payment.countDocuments({ company: req.user.company });
-    const transactionId = generatePaymentNumber(count + 1);
+    const transactionId = generateTransactionNumber(count + 1);
 
     const payment = await Payment.create({
       ...req.body,
@@ -219,10 +219,10 @@ export const verifyMobileMoney = async (req, res, next) => {
   try {
     const { provider, transactionId } = req.body;
 
-    const result = await verifyMobileMoneyPayment(provider, transactionId);
+    const result = await checkMobileMoneyPaymentStatus(provider, transactionId);
 
     // Si le paiement est confirmé, mettre à jour le statut
-    if (result.status === 'success') {
+    if (result.paid) {
       const payment = await Payment.findOne({ transactionId });
       if (payment) {
         payment.status = 'completed';

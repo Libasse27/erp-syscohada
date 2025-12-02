@@ -2,6 +2,9 @@
  * Controller Report - Gestion des rapports et exports
  */
 
+import Invoice from '../models/Invoice.js';
+import Payment from '../models/Payment.js';
+import Product from '../models/Product.js';
 import { AppError } from '../middlewares/errorMiddleware.js';
 import {
   generateSalesReport,
@@ -13,11 +16,11 @@ import {
   generateBalanceSheet,
   generateIncomeStatement,
 } from '../services/accountingService.js';
-import { generateInvoicePDF } from '../services/pdfService.js';
+import { generateInvoice as generateInvoicePDF } from '../services/pdfService.js';
 import {
-  exportInvoicesToExcel,
-  exportPaymentsToExcel,
-  exportProductsToExcel,
+  exportInvoices,
+  exportPayments,
+  exportProducts,
 } from '../services/excelService.js';
 
 export const getSalesReport = async (req, res, next) => {
@@ -162,12 +165,20 @@ export const exportInvoicesExcel = async (req, res, next) => {
   try {
     const { startDate, endDate, type, status } = req.query;
 
-    const buffer = await exportInvoicesToExcel(req.user.company, {
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-      type,
-      status,
-    });
+    const filter = { company: req.user.company };
+    if (startDate || endDate) {
+      filter.date = {};
+      if (startDate) filter.date.$gte = new Date(startDate);
+      if (endDate) filter.date.$lte = new Date(endDate);
+    }
+    if (type) filter.type = type;
+    if (status) filter.status = status;
+
+    const invoices = await Invoice.find(filter)
+      .populate('customer', 'firstName lastName companyName')
+      .populate('items.product', 'name code');
+
+    const buffer = await exportInvoices(invoices);
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=factures.xlsx');
@@ -181,12 +192,20 @@ export const exportPaymentsExcel = async (req, res, next) => {
   try {
     const { startDate, endDate, method, type } = req.query;
 
-    const buffer = await exportPaymentsToExcel(req.user.company, {
-      startDate: startDate ? new Date(startDate) : undefined,
-      endDate: endDate ? new Date(endDate) : undefined,
-      method,
-      type,
-    });
+    const filter = { company: req.user.company };
+    if (startDate || endDate) {
+      filter.date = {};
+      if (startDate) filter.date.$gte = new Date(startDate);
+      if (endDate) filter.date.$lte = new Date(endDate);
+    }
+    if (method) filter.method = method;
+    if (type) filter.type = type;
+
+    const payments = await Payment.find(filter)
+      .populate('invoice', 'number')
+      .populate('customer', 'firstName lastName companyName');
+
+    const buffer = await exportPayments(payments);
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=paiements.xlsx');
@@ -198,7 +217,10 @@ export const exportPaymentsExcel = async (req, res, next) => {
 
 export const exportProductsExcel = async (req, res, next) => {
   try {
-    const buffer = await exportProductsToExcel(req.user.company);
+    const products = await Product.find({ company: req.user.company })
+      .populate('category', 'name');
+
+    const buffer = await exportProducts(products);
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=produits.xlsx');

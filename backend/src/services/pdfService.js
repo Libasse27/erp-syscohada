@@ -4,7 +4,8 @@
  */
 
 import { generateInvoicePDF, generateReceiptPDF, generateReportPDF } from '../utils/pdfGenerator.js';
-import { formatCurrency, formatDate } from '../utils/numberFormatter.js';
+import { formatCurrency } from '../utils/numberFormatter.js';
+import { formatDate } from '../utils/dateFormatter.js';
 import logger from '../utils/logger.js';
 
 /**

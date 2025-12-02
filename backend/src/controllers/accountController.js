@@ -5,7 +5,7 @@
 import Account from '../models/Account.js';
 import { AppError } from '../middlewares/errorMiddleware.js';
 import { formatPaginatedResponse, getPaginationParams } from '../utils/helpers.js';
-import { getAccountsByClass, validateAccountCode } from '../utils/syscohadaHelper.js';
+import { isValidSyscohadaCode, SYSCOHADA_MAIN_ACCOUNTS } from '../utils/syscohadaHelper.js';
 
 export const getAccounts = async (req, res, next) => {
   try {
@@ -76,7 +76,7 @@ export const createAccount = async (req, res, next) => {
     const { code } = req.body;
 
     // Valider le code SYSCOHADA
-    if (!validateAccountCode(code)) {
+    if (!isValidSyscohadaCode(code)) {
       throw new AppError('Code compte SYSCOHADA invalide', 400);
     }
 
@@ -189,19 +189,6 @@ export const getAccountBalance = async (req, res, next) => {
   }
 };
 
-export const getAccountsByClassNumber = async (req, res, next) => {
-  try {
-    const classNumber = parseInt(req.params.class);
-    const accounts = await getAccountsByClass(classNumber);
-
-    res.json({
-      success: true,
-      data: accounts,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 export default {
   getAccounts,
@@ -211,5 +198,4 @@ export default {
   updateAccount,
   deleteAccount,
   getAccountBalance,
-  getAccountsByClassNumber,
 };
