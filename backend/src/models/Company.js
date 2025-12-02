@@ -223,7 +223,7 @@ const companySchema = new mongoose.Schema(
 );
 
 // Index
-companySchema.index({ ninea: 1 });
+// ninea index is already created by unique: true in schema definition
 companySchema.index({ email: 1 });
 companySchema.index({ isActive: 1 });
 companySchema.index({ 'subscription.status': 1 });

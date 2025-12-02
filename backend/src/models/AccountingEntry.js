@@ -221,7 +221,7 @@ accountingEntrySchema.methods.post = async function () {
 };
 
 // Méthode : Valider l'écriture
-accountingEntrySchema.methods.validate = async function (userId) {
+accountingEntrySchema.methods.validateEntry = async function (userId) {
   if (this.status !== 'posted') {
     throw new Error('Seules les écritures postées peuvent être validées');
   }

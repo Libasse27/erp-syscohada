@@ -184,7 +184,7 @@ paymentSchema.index({ status: 1 });
 paymentSchema.index({ date: -1 });
 
 // Méthode : Valider le paiement
-paymentSchema.methods.validate = async function (userId) {
+paymentSchema.methods.validatePayment = async function (userId) {
   if (this.status !== 'pending') {
     throw new Error('Seuls les paiements en attente peuvent être validés');
   }
