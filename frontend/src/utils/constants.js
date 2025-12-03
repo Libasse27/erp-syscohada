@@ -128,6 +128,17 @@ export const MOBILE_MONEY_PROVIDER_LABELS = {
   [MOBILE_MONEY_PROVIDERS.FREE_MONEY]: 'Free Money',
 };
 
+// Payment Types (Receipts vs Disbursements)
+export const PAYMENT_TYPES = {
+  RECEIPT: 'receipt', // Encaissement (from customer)
+  DISBURSEMENT: 'disbursement', // Décaissement (to supplier)
+};
+
+export const PAYMENT_TYPE_LABELS = {
+  [PAYMENT_TYPES.RECEIPT]: 'Encaissement',
+  [PAYMENT_TYPES.DISBURSEMENT]: 'Décaissement',
+};
+
 // Payment Status
 export const PAYMENT_STATUS = {
   PENDING: 'pending',
