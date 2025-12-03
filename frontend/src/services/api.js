@@ -19,6 +19,22 @@ const api = axios.create({
   withCredentials: true, // Pour les cookies (refresh token)
 });
 
+// Variables pour gérer le rafraîchissement du token
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 /**
  * Intercepteur de requête
  * Ajoute le token d'accès à chaque requête
@@ -49,7 +65,22 @@ api.interceptors.response.use(
 
     // Si le token est expiré (401) et que ce n'est pas déjà une tentative de refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Si on est déjà en train de rafraîchir, mettre en file d'attente
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         // Tenter de rafraîchir le token
@@ -60,17 +91,26 @@ api.interceptors.response.use(
         );
 
         // Sauvegarder le nouveau token
-        localStorage.setItem('accessToken', data.accessToken);
+        const newToken = data.accessToken;
+        localStorage.setItem('accessToken', newToken);
+
+        // Mettre à jour le header de la requête originale
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        // Traiter la file d'attente
+        processQueue(null, newToken);
 
         // Réessayer la requête originale avec le nouveau token
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         return api(originalRequest);
       } catch (refreshError) {
         // Si le refresh échoue, déconnecter l'utilisateur
+        processQueue(refreshError, null);
         localStorage.removeItem('accessToken');
         window.location.href = '/login';
         toast.error('Session expirée. Veuillez vous reconnecter.');
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
 
@@ -86,13 +126,16 @@ api.interceptors.response.use(
           toast.error('Accès interdit');
           break;
         case 404:
-          toast.error('Ressource non trouvée');
+          // Ne pas afficher de toast pour les 404
           break;
         case 500:
           toast.error('Erreur serveur. Veuillez réessayer.');
           break;
         default:
-          toast.error(message);
+          // Ne pas afficher de toast pour les 401 (déjà gérés)
+          if (error.response.status !== 401) {
+            toast.error(message);
+          }
       }
     } else if (error.request) {
       toast.error('Impossible de contacter le serveur');
