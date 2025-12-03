@@ -2,6 +2,41 @@
 import { DEFAULT_CURRENCY, CURRENCY_SYMBOL, DECIMAL_PLACES } from './constants';
 
 /**
+ * Format date to French locale
+ * @param {Date|string} date - Date to format
+ * @param {string} format - Format type: 'short', 'long', 'datetime', 'time'
+ * @returns {string} - Formatted date
+ */
+export const formatDate = (date, format = 'short') => {
+  if (!date) return '';
+
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+
+  if (isNaN(dateObj.getTime())) return '';
+
+  switch (format) {
+    case 'short':
+      return dateObj.toLocaleDateString('fr-FR');
+    case 'long':
+      return dateObj.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    case 'datetime':
+      return dateObj.toLocaleString('fr-FR');
+    case 'time':
+      return dateObj.toLocaleTimeString('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    default:
+      return dateObj.toLocaleDateString('fr-FR');
+  }
+};
+
+/**
  * Format currency amount
  * @param {number} amount - Amount to format
  * @param {string} currency - Currency code
@@ -19,6 +54,50 @@ export const formatCurrency = (amount, currency = DEFAULT_CURRENCY, decimals = D
   });
 
   return `${formatted} ${CURRENCY_SYMBOL}`;
+};
+
+/**
+ * Format relative time (e.g., "il y a 2 jours")
+ * @param {Date|string} date - Date to format
+ * @returns {string} - Relative time
+ */
+export const formatRelativeTime = (date) => {
+  if (!date) return '';
+
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  const now = new Date();
+  const diffInSeconds = Math.floor((now - dateObj) / 1000);
+
+  if (diffInSeconds < 60) return 'À l\'instant';
+  if (diffInSeconds < 3600) return `Il y a ${Math.floor(diffInSeconds / 60)} min`;
+  if (diffInSeconds < 86400) return `Il y a ${Math.floor(diffInSeconds / 3600)}h`;
+  if (diffInSeconds < 2592000) return `Il y a ${Math.floor(diffInSeconds / 86400)} jours`;
+  if (diffInSeconds < 31536000) return `Il y a ${Math.floor(diffInSeconds / 2592000)} mois`;
+  return `Il y a ${Math.floor(diffInSeconds / 31536000)} ans`;
+};
+
+/**
+ * Format date range
+ * @param {Date|string} startDate - Start date
+ * @param {Date|string} endDate - End date
+ * @returns {string} - Formatted date range
+ */
+export const formatDateRange = (startDate, endDate) => {
+  if (!startDate || !endDate) return '';
+  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
+};
+
+/**
+ * Get month name in French
+ * @param {number} month - Month number (0-11)
+ * @returns {string} - Month name
+ */
+export const getMonthName = (month) => {
+  const months = [
+    'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+  ];
+  return months[month] || '';
 };
 
 /**
