@@ -225,6 +225,9 @@ export const {
   clearSearch,
 } = uiSlice.actions;
 
+// Alias for backward compatibility (setBreadcrumb = setBreadcrumbs)
+export const setBreadcrumb = setBreadcrumbs;
+
 // Selectors
 export const selectTheme = (state) => state.ui.theme;
 export const selectSidebarOpen = (state) => state.ui.sidebarOpen;
