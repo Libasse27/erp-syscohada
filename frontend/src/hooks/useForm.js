@@ -192,4 +192,8 @@ const useForm = (initialValues = {}, validationRules = {}, onSubmit = null) => {
   };
 };
 
+// Named export
+export { useForm };
+
+// Default export
 export default useForm;
