@@ -63,6 +63,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // Ne pas gérer les 401 pour les requêtes de refresh elles-mêmes
+    if (originalRequest.url?.includes('/auth/refresh')) {
+      return Promise.reject(error);
+    }
+
     // Si le token est expiré (401) et que ce n'est pas déjà une tentative de refresh
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Si on est déjà en train de rafraîchir, mettre en file d'attente
