@@ -308,7 +308,7 @@ $breadcrumb-margin-bottom: 0;
 $breadcrumb-bg: transparent;
 $breadcrumb-divider-color: $gray-500;
 $breadcrumb-active-color: $gray-700;
-$breadcrumb-divider: quote("/");
+$breadcrumb-divider: "/";
 $breadcrumb-border-radius: 0;
 
 // Navbar
@@ -358,9 +358,15 @@ $container-max-widths: (
 );
 
 // ============================================
-// Import Bootstrap
+// Import Bootstrap avec la syntaxe moderne @use
 // ============================================
 
+// Désactiver les avertissements de dépréciation
+@use "sass:color";
+@use "sass:math";
+@use "sass:string";
+
+// Import Bootstrap
 @import "bootstrap/scss/bootstrap";
 
 // ============================================
