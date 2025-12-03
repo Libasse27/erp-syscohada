@@ -9,14 +9,66 @@ export * from './helpers';
 // Validation functions
 export * from './validators';
 
-// Formatting functions
+// Formatting functions - Export all from formatters (primary source)
 export * from './formatters';
 
-// Date utilities
-export * from './dateUtils';
+// Date utilities - Export only non-conflicting functions
+export {
+  formatDateForAPI,
+  formatDateTime,
+  formatTime,
+  getRelativeTime,
+  parseDate,
+  isToday,
+  isYesterday,
+  isThisWeek,
+  isThisMonth,
+  isThisYear,
+  addDays,
+  addMonths,
+  addYears,
+  getDaysDifference,
+  startOfDay,
+  endOfDay,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+  getDayName,
+  isWeekend,
+  isBusinessDay,
+  getAge,
+  isOverdue,
+  getDateRange,
+} from './dateUtils';
 
-// Currency utilities
-export * from './currencyUtils';
+// Currency utilities - Export only non-conflicting functions
+export {
+  addAmounts,
+  subtractAmounts,
+  multiplyAmount,
+  divideAmount,
+  calculatePercentage,
+  applyDiscount,
+  calculateTax,
+  addTax,
+  removeTax,
+  calculateTotal,
+  calculateSubtotal,
+  calculateInvoiceTotal,
+  roundAmount,
+  convertCurrency,
+  calculateChange,
+  isPositiveAmount,
+  isZeroAmount,
+  compareAmounts,
+  getMinAmount,
+  getMaxAmount,
+  getAverageAmount,
+  formatCompactCurrency,
+  calculateProfitMargin,
+  calculateMarkup,
+} from './currencyUtils';
 
 // PDF export utilities
 export * from './pdfExport';

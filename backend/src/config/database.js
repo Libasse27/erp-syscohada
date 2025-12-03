@@ -16,8 +16,15 @@ export const connectDB = async () => {
 
     const options = {
       maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000, // Augmenté à 10 secondes
       socketTimeoutMS: 45000,
+      family: 4, // Forcer IPv4
+      retryWrites: true,
+      retryReads: true,
+      // Options SSL/TLS pour MongoDB Atlas
+      tls: true,
+      tlsAllowInvalidCertificates: false,
+      tlsAllowInvalidHostnames: false,
     };
 
     const conn = await mongoose.connect(mongoURI, options);

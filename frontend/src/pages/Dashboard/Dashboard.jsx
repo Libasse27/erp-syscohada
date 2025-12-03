@@ -1,16 +1,477 @@
-import { Outlet } from 'react-router-dom';
-import MainLayout from '../../components/layout/MainLayout';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  FaShoppingCart,
+  FaFileInvoiceDollar,
+  FaBoxes,
+  FaUsers,
+  FaArrowUp,
+  FaArrowDown,
+  FaExclamationTriangle,
+  FaChartLine,
+  FaClock,
+  FaMoneyBillWave,
+} from 'react-icons/fa';
+import dashboardService from '../../services/dashboardService';
+import { formatCurrency, formatDate, formatNumber } from '../../utils';
+import { setBreadcrumbs, setPageTitle } from '../../store/slices/uiSlice';
+import { useDispatch } from 'react-redux';
 
 /**
- * Dashboard page wrapper
- * Main container for all dashboard-related pages
- * Uses MainLayout which includes Header, Sidebar, Footer, and Breadcrumb
+ * Dashboard - Page principale du tableau de bord
+ * Affiche les KPIs, statistiques, graphiques et alertes
  */
 const Dashboard = () => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    sales: { total: 0, percentage: 0, trend: 'up' },
+    purchases: { total: 0, percentage: 0, trend: 'up' },
+    inventory: { total: 0, percentage: 0, trend: 'up' },
+    customers: { total: 0, percentage: 0, trend: 'up' },
+  });
+  const [alerts, setAlerts] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
+  const [topCustomers, setTopCustomers] = useState([]);
+  const [salesChart, setSalesChart] = useState({ labels: [], data: [] });
+  const [period, setPeriod] = useState('month'); // month, week, year
+
+  useEffect(() => {
+    dispatch(setPageTitle('Tableau de bord'));
+    dispatch(setBreadcrumbs([{ label: 'Tableau de bord', path: '/dashboard' }]));
+    fetchDashboardData();
+  }, [dispatch, period]);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const [
+        statsData,
+        alertsData,
+        activitiesData,
+        productsData,
+        customersData,
+        chartData,
+      ] = await Promise.all([
+        dashboardService.getStats(),
+        dashboardService.getAlerts(),
+        dashboardService.getRecentActivities(10),
+        dashboardService.getTopProducts(5),
+        dashboardService.getTopCustomers(5),
+        dashboardService.getSalesChart({ period }),
+      ]);
+
+      setStats(statsData);
+      setAlerts(alertsData);
+      setRecentActivities(activitiesData);
+      setTopProducts(productsData);
+      setTopCustomers(customersData);
+      setSalesChart(chartData);
+    } catch (error) {
+      console.error('Erreur lors du chargement du tableau de bord:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const StatCard = ({ title, value, icon: Icon, percentage, trend, color, link }) => (
+    <div className="col-md-6 col-xl-3 mb-4">
+      <div className="card border-0 shadow-sm h-100">
+        <div className="card-body">
+          <div className="d-flex justify-content-between align-items-start">
+            <div className="flex-grow-1">
+              <h6 className="text-muted text-uppercase mb-2" style={{ fontSize: '0.75rem' }}>
+                {title}
+              </h6>
+              <h3 className="mb-0 fw-bold">{value}</h3>
+              {percentage !== undefined && (
+                <div className="mt-2">
+                  <span className={`badge bg-${trend === 'up' ? 'success' : 'danger'} bg-opacity-10 text-${trend === 'up' ? 'success' : 'danger'}`}>
+                    {trend === 'up' ? <FaArrowUp size={10} /> : <FaArrowDown size={10} />}
+                    {' '}{Math.abs(percentage)}%
+                  </span>
+                  <small className="text-muted ms-2">vs mois dernier</small>
+                </div>
+              )}
+            </div>
+            <div className={`bg-${color} bg-opacity-10 p-3 rounded`}>
+              <Icon className={`text-${color}`} size={24} />
+            </div>
+          </div>
+          {link && (
+            <Link to={link} className="btn btn-link btn-sm p-0 mt-2 text-decoration-none">
+              Voir détails →
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const AlertCard = ({ alert }) => {
+    const getAlertColor = (type) => {
+      switch (type) {
+        case 'danger': return 'danger';
+        case 'warning': return 'warning';
+        case 'info': return 'info';
+        default: return 'secondary';
+      }
+    };
+
+    return (
+      <div className={`alert alert-${getAlertColor(alert.type)} d-flex align-items-center mb-2`} role="alert">
+        <FaExclamationTriangle className="me-2" />
+        <div className="flex-grow-1">
+          <strong>{alert.title}</strong>
+          <p className="mb-0 small">{alert.message}</p>
+        </div>
+        {alert.link && (
+          <Link to={alert.link} className="btn btn-sm btn-outline-secondary ms-2">
+            Voir
+          </Link>
+        )}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
+    <div className="container-fluid py-4">
+      {/* En-tête */}
+      <div className="row mb-4">
+        <div className="col">
+          <h2 className="mb-0">Tableau de bord</h2>
+          <p className="text-muted">Bienvenue sur votre tableau de bord ERP SYSCOHADA</p>
+        </div>
+        <div className="col-auto">
+          <div className="btn-group" role="group">
+            <button
+              type="button"
+              className={`btn btn-sm ${period === 'week' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => setPeriod('week')}
+            >
+              Semaine
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${period === 'month' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => setPeriod('month')}
+            >
+              Mois
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${period === 'year' ? 'btn-primary' : 'btn-outline-primary'}`}
+              onClick={() => setPeriod('year')}
+            >
+              Année
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Cartes de statistiques */}
+      <div className="row">
+        <StatCard
+          title="Ventes"
+          value={formatCurrency(stats.sales?.total || 0)}
+          icon={FaShoppingCart}
+          percentage={stats.sales?.percentage}
+          trend={stats.sales?.trend}
+          color="primary"
+          link="/sales/invoices"
+        />
+        <StatCard
+          title="Achats"
+          value={formatCurrency(stats.purchases?.total || 0)}
+          icon={FaFileInvoiceDollar}
+          percentage={stats.purchases?.percentage}
+          trend={stats.purchases?.trend}
+          color="success"
+          link="/purchases/orders"
+        />
+        <StatCard
+          title="Stock"
+          value={formatNumber(stats.inventory?.total || 0)}
+          icon={FaBoxes}
+          percentage={stats.inventory?.percentage}
+          trend={stats.inventory?.trend}
+          color="warning"
+          link="/inventory/products"
+        />
+        <StatCard
+          title="Clients"
+          value={formatNumber(stats.customers?.total || 0)}
+          icon={FaUsers}
+          percentage={stats.customers?.percentage}
+          trend={stats.customers?.trend}
+          color="info"
+          link="/sales/customers"
+        />
+      </div>
+
+      {/* Alertes */}
+      {alerts.length > 0 && (
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="card border-0 shadow-sm">
+              <div className="card-header bg-white border-0">
+                <h5 className="mb-0">
+                  <FaExclamationTriangle className="text-warning me-2" />
+                  Alertes ({alerts.length})
+                </h5>
+              </div>
+              <div className="card-body">
+                {alerts.map((alert, index) => (
+                  <AlertCard key={index} alert={alert} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Graphiques et listes */}
+      <div className="row">
+        {/* Graphique des ventes */}
+        <div className="col-lg-8 mb-4">
+          <div className="card border-0 shadow-sm h-100">
+            <div className="card-header bg-white border-0">
+              <h5 className="mb-0">
+                <FaChartLine className="text-primary me-2" />
+                Évolution des ventes
+              </h5>
+            </div>
+            <div className="card-body">
+              {salesChart.labels?.length > 0 ? (
+                <div className="chart-container" style={{ position: 'relative', height: '300px' }}>
+                  {/* Graphique simple avec barres CSS */}
+                  <div className="d-flex align-items-end justify-content-around h-100 pb-4">
+                    {salesChart.data?.map((value, index) => {
+                      const maxValue = Math.max(...salesChart.data);
+                      const height = (value / maxValue) * 100;
+                      return (
+                        <div key={index} className="text-center" style={{ width: '8%' }}>
+                          <div
+                            className="bg-primary rounded-top"
+                            style={{
+                              height: `${height}%`,
+                              minHeight: '20px',
+                              transition: 'height 0.3s ease',
+                            }}
+                            title={formatCurrency(value)}
+                          />
+                          <small className="d-block mt-2 text-muted">{salesChart.labels[index]}</small>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center text-muted py-5">
+                  <p>Aucune donnée disponible</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Activités récentes */}
+        <div className="col-lg-4 mb-4">
+          <div className="card border-0 shadow-sm h-100">
+            <div className="card-header bg-white border-0">
+              <h5 className="mb-0">
+                <FaClock className="text-info me-2" />
+                Activités récentes
+              </h5>
+            </div>
+            <div className="card-body" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+              {recentActivities.length > 0 ? (
+                <div className="list-group list-group-flush">
+                  {recentActivities.map((activity, index) => (
+                    <div key={index} className="list-group-item px-0 border-0 border-bottom">
+                      <div className="d-flex w-100 justify-content-between align-items-start">
+                        <div className="flex-grow-1">
+                          <h6 className="mb-1 small">{activity.title}</h6>
+                          <p className="mb-1 small text-muted">{activity.description}</p>
+                          <small className="text-muted">
+                            <FaClock size={10} className="me-1" />
+                            {formatDate(activity.date, 'datetime')}
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-muted py-3">
+                  <p className="small">Aucune activité récente</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Produits et clients */}
+      <div className="row">
+        {/* Top produits */}
+        <div className="col-lg-6 mb-4">
+          <div className="card border-0 shadow-sm">
+            <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">
+                <FaBoxes className="text-warning me-2" />
+                Produits les plus vendus
+              </h5>
+              <Link to="/inventory/products" className="btn btn-sm btn-outline-primary">
+                Tout voir
+              </Link>
+            </div>
+            <div className="card-body">
+              {topProducts.length > 0 ? (
+                <div className="table-responsive">
+                  <table className="table table-sm table-hover">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th className="text-end">Quantité</th>
+                        <th className="text-end">Montant</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topProducts.map((product, index) => (
+                        <tr key={index}>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <div className="bg-light rounded p-2 me-2">
+                                <FaBoxes className="text-muted" size={16} />
+                              </div>
+                              <div>
+                                <div className="fw-medium">{product.name}</div>
+                                <small className="text-muted">{product.reference}</small>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-end">{formatNumber(product.quantity)}</td>
+                          <td className="text-end fw-medium">{formatCurrency(product.amount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center text-muted py-3">
+                  <p>Aucun produit</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Top clients */}
+        <div className="col-lg-6 mb-4">
+          <div className="card border-0 shadow-sm">
+            <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+              <h5 className="mb-0">
+                <FaUsers className="text-info me-2" />
+                Meilleurs clients
+              </h5>
+              <Link to="/sales/customers" className="btn btn-sm btn-outline-primary">
+                Tout voir
+              </Link>
+            </div>
+            <div className="card-body">
+              {topCustomers.length > 0 ? (
+                <div className="table-responsive">
+                  <table className="table table-sm table-hover">
+                    <thead>
+                      <tr>
+                        <th>Client</th>
+                        <th className="text-end">Commandes</th>
+                        <th className="text-end">Montant total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {topCustomers.map((customer, index) => (
+                        <tr key={index}>
+                          <td>
+                            <div className="d-flex align-items-center">
+                              <div className="bg-light rounded-circle p-2 me-2" style={{ width: '40px', height: '40px' }}>
+                                <FaUsers className="text-muted" size={16} />
+                              </div>
+                              <div>
+                                <div className="fw-medium">{customer.name}</div>
+                                <small className="text-muted">{customer.email}</small>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-end">{formatNumber(customer.ordersCount)}</td>
+                          <td className="text-end fw-medium">{formatCurrency(customer.totalAmount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center text-muted py-3">
+                  <p>Aucun client</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Indicateurs financiers */}
+      <div className="row">
+        <div className="col-12">
+          <div className="card border-0 shadow-sm">
+            <div className="card-header bg-white border-0">
+              <h5 className="mb-0">
+                <FaMoneyBillWave className="text-success me-2" />
+                Indicateurs financiers
+              </h5>
+            </div>
+            <div className="card-body">
+              <div className="row text-center">
+                <div className="col-md-3 mb-3">
+                  <div className="border-end">
+                    <h3 className="text-primary mb-0">{formatCurrency(stats.revenue || 0)}</h3>
+                    <small className="text-muted">Chiffre d'affaires</small>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <div className="border-end">
+                    <h3 className="text-success mb-0">{formatCurrency(stats.profit || 0)}</h3>
+                    <small className="text-muted">Bénéfice net</small>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <div className="border-end">
+                    <h3 className="text-warning mb-0">{formatCurrency(stats.expenses || 0)}</h3>
+                    <small className="text-muted">Dépenses</small>
+                  </div>
+                </div>
+                <div className="col-md-3 mb-3">
+                  <h3 className="text-info mb-0">{stats.profitMargin || 0}%</h3>
+                  <small className="text-muted">Marge bénéficiaire</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
