@@ -1,4 +1,11 @@
-import { useEffect, useState } from 'react';
+/**
+ * Dashboard - Page principale du tableau de bord
+ * Affiche les KPIs, statistiques, graphiques et alertes
+ * Utilise Redux pour la gestion d'état
+ */
+
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   FaShoppingCart,
@@ -12,68 +19,41 @@ import {
   FaClock,
   FaMoneyBillWave,
 } from 'react-icons/fa';
-import dashboardService from '../../services/dashboardService';
-import { formatCurrency, formatDate, formatNumber } from '../../utils';
+import {
+  fetchDashboardData,
+  fetchSalesChart,
+  setPeriod,
+  selectDashboardData,
+  selectPeriod,
+  selectDashboardLoading,
+} from '../../store/slices/dashboardSlice';
 import { setBreadcrumbs, setPageTitle } from '../../store/slices/uiSlice';
-import { useDispatch } from 'react-redux';
+import { formatCurrency, formatDate, formatNumber } from '../../utils';
 
-/**
- * Dashboard - Page principale du tableau de bord
- * Affiche les KPIs, statistiques, graphiques et alertes
- */
 const Dashboard = () => {
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    sales: { total: 0, percentage: 0, trend: 'up' },
-    purchases: { total: 0, percentage: 0, trend: 'up' },
-    inventory: { total: 0, percentage: 0, trend: 'up' },
-    customers: { total: 0, percentage: 0, trend: 'up' },
-  });
-  const [alerts, setAlerts] = useState([]);
-  const [recentActivities, setRecentActivities] = useState([]);
-  const [topProducts, setTopProducts] = useState([]);
-  const [topCustomers, setTopCustomers] = useState([]);
-  const [salesChart, setSalesChart] = useState({ labels: [], data: [] });
-  const [period, setPeriod] = useState('month'); // month, week, year
 
+  // Sélecteurs Redux
+  const dashboardData = useSelector(selectDashboardData);
+  const period = useSelector(selectPeriod);
+  const loading = useSelector(selectDashboardLoading);
+
+  const { stats, alerts, recentActivities, topProducts, topCustomers, salesChart } = dashboardData;
+
+  // Initialisation et chargement des données
   useEffect(() => {
     dispatch(setPageTitle('Tableau de bord'));
     dispatch(setBreadcrumbs([{ label: 'Tableau de bord', path: '/dashboard' }]));
-    fetchDashboardData();
+    dispatch(fetchDashboardData(period));
   }, [dispatch, period]);
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const [
-        statsData,
-        alertsData,
-        activitiesData,
-        productsData,
-        customersData,
-        chartData,
-      ] = await Promise.all([
-        dashboardService.getStats(),
-        dashboardService.getAlerts(),
-        dashboardService.getRecentActivities(10),
-        dashboardService.getTopProducts(5),
-        dashboardService.getTopCustomers(5),
-        dashboardService.getSalesChart({ period }),
-      ]);
-
-      setStats(statsData);
-      setAlerts(alertsData);
-      setRecentActivities(activitiesData);
-      setTopProducts(productsData);
-      setTopCustomers(customersData);
-      setSalesChart(chartData);
-    } catch (error) {
-      console.error('Erreur lors du chargement du tableau de bord:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Changement de période
+  const handlePeriodChange = (newPeriod) => {
+    dispatch(setPeriod(newPeriod));
+    dispatch(fetchSalesChart(newPeriod));
   };
+
+  // ========== COMPOSANTS ==========
 
   const StatCard = ({ title, value, icon: Icon, percentage, trend, color, link }) => (
     <div className="col-md-6 col-xl-3 mb-4">
@@ -135,6 +115,8 @@ const Dashboard = () => {
     );
   };
 
+  // ========== RENDER ==========
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
@@ -158,21 +140,21 @@ const Dashboard = () => {
             <button
               type="button"
               className={`btn btn-sm ${period === 'week' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setPeriod('week')}
+              onClick={() => handlePeriodChange('week')}
             >
               Semaine
             </button>
             <button
               type="button"
               className={`btn btn-sm ${period === 'month' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setPeriod('month')}
+              onClick={() => handlePeriodChange('month')}
             >
               Mois
             </button>
             <button
               type="button"
               className={`btn btn-sm ${period === 'year' ? 'btn-primary' : 'btn-outline-primary'}`}
-              onClick={() => setPeriod('year')}
+              onClick={() => handlePeriodChange('year')}
             >
               Année
             </button>
