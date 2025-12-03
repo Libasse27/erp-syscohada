@@ -1,117 +1,157 @@
-/**
- * ERP SYSCOHADA - Serveur Backend
- * Application de gestion commerciale et comptabilité pour PME sénégalaises
- */
+// ==============================================================================
+//        POINT D'ENTRÉE PRINCIPAL DU SERVEUR
+//
+// Ce fichier orchestre :
+// - le démarrage de l'application Express,
+// - la connexion aux services externes (MongoDB),
+// - l'initialisation de Socket.IO,
+// - la gestion des événements système critiques pour un arrêt propre.
+// ==============================================================================
 
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import compression from 'compression';
-import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
+// --- 1. Chargement des variables d'environnement ---
 import dotenv from 'dotenv';
-import { connectDB } from './src/config/database.js';
-import { errorHandler } from './src/middlewares/errorMiddleware.js';
-import logger from './src/utils/logger.js';
-
-// Import des routes
-import routes from './src/routes/index.js';
-
-// Chargement des variables d'environnement
 dotenv.config();
 
-// Initialisation de l'application Express
-const app = express();
+// --- 2. Dépendances ---
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import app from './app.js';
+import { connectDB, disconnectDB } from './src/config/database.js';
+import logger from './src/utils/logger.js';
+
+// --- 3. Configuration ---
 const PORT = process.env.PORT || 5000;
+const ENV = process.env.NODE_ENV || 'development';
 
-// Connexion à la base de données MongoDB
-connectDB();
+// --- 4. Initialisation de Socket.IO ---
+let io;
 
-// Middlewares de sécurité
-app.use(helmet());
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Middlewares de parsing
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(cookieParser());
-
-// Compression des réponses
-app.use(compression());
-
-// Logging HTTP
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-} else {
-  app.use(morgan('combined', {
-    stream: {
-      write: (message) => logger.info(message.trim())
+function initSocket(server) {
+  io = new Server(server, {
+    cors: {
+      origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+      methods: ['GET', 'POST']
     }
-  }));
+  });
+
+  // Gérer les connexions Socket.io
+  io.on('connection', (socket) => {
+    logger.info(`✅ Nouveau client connecté: ${socket.id}`);
+
+    socket.on('disconnect', () => {
+      logger.info(`❌ Client déconnecté: ${socket.id}`);
+    });
+  });
+
+  // Rendre io accessible globalement
+  app.set('io', io);
+  logger.info('✅ Socket.IO initialisé avec succès');
+
+  return io;
 }
 
-// Route de santé (health check)
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Serveur ERP SYSCOHADA opérationnel',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
-  });
-});
+// --- 5. Fermeture propre (Graceful Shutdown) ---
+async function shutdown(serverInstance, code = 0) {
+  logger.info('🛑 Fermeture du serveur en cours...');
+  try {
+    // Fermer Socket.IO
+    if (io) {
+      io.close(() => {
+        logger.info('✅ Socket.IO fermé proprement');
+      });
+    }
 
-// Routes API
-app.use('/api', routes);
+    // Fermer la base de données
+    await disconnectDB();
 
-// Route 404 - Not Found
-app.use('*', (req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route non trouvée',
-    path: req.originalUrl
-  });
-});
-
-// Middleware de gestion des erreurs (doit être en dernier)
-app.use(errorHandler);
-
-// Démarrage du serveur
-const server = app.listen(PORT, () => {
-  logger.info(
-    `✅ Serveur démarré en mode ${process.env.NODE_ENV} sur le port ${PORT}`
-  );
-});
-
-server.on('error', (err) => {
-  if (err.code === 'EADDRINUSE') {
-    const newPort = Number(PORT) + 1;
-    logger.warn(`Le port ${PORT} est déjà utilisé, tentative sur le port ${newPort}`);
-    app.listen(newPort, () => {
-      logger.info(
-        `✅ Serveur démarré en mode ${process.env.NODE_ENV} sur le port ${newPort}`
-      );
+    // Fermer le serveur HTTP
+    serverInstance.close(() => {
+      logger.info('✅ Serveur arrêté proprement.');
+      process.exit(code);
     });
-  } else {
-    logger.error(err);
+
+    // Timeout de 10 secondes pour forcer la fermeture
+    setTimeout(() => {
+      logger.error('⏰ Timeout dépassé, fermeture forcée du serveur');
+      process.exit(1);
+    }, 10000);
+  } catch (err) {
+    logger.error('❌ Erreur lors de l\'arrêt du serveur', { error: err.message });
+    process.exit(1);
   }
-});
+}
 
-process.on('unhandledRejection', (err, promise) => {
-  logger.error(`❌ ERREUR: ${err.message}`);
-  // Fermer le serveur et quitter le processus
-  server.close(() => process.exit(1));
-});
+// --- 6. Gestion des événements système ---
+function setupProcessEventListeners(serverInstance) {
+  process.on('unhandledRejection', (reason) => {
+    logger.error('💥 Rejet de promesse non géré. L\'application va s\'arrêter.', { reason });
+    throw reason;
+  });
 
-process.on('uncaughtException', (err) => {
-  logger.error('❌ UNCAUGHT EXCEPTION! Arrêt du serveur...');
-  logger.error(err);
-  process.exit(1);
-});
+  process.on('uncaughtException', async (err) => {
+    logger.error('💥 Exception non interceptée. Arrêt brutal du serveur...', { error: err.message });
+    await shutdown(serverInstance, 1);
+  });
 
-export default app;
+  process.on('SIGTERM', async () => {
+    logger.warn('⚠️  Signal SIGTERM reçu. Fermeture propre du serveur...');
+    await shutdown(serverInstance, 0);
+  });
 
+  process.on('SIGINT', async () => {
+    logger.warn('⚠️  Signal SIGINT (Ctrl+C) reçu. Fermeture propre du serveur...');
+    await shutdown(serverInstance, 0);
+  });
+}
+
+// --- 7. Démarrage du serveur ---
+async function startServer() {
+  logger.info('====================================================');
+  logger.info('🚀 Lancement du serveur ERP SYSCOHADA...');
+  logger.info(`🔧 Environnement : ${ENV}`);
+  logger.info('====================================================');
+
+  try {
+    // Connexion à la base de données
+    await connectDB();
+
+    // Création du serveur HTTP
+    const server = createServer(app);
+
+    // Initialisation de Socket.IO
+    initSocket(server);
+
+    // Gestion des erreurs du serveur
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        logger.error(`❌ Le port ${PORT} est déjà utilisé`);
+        logger.error('💡 Veuillez libérer le port ou utiliser un autre port');
+        process.exit(1);
+      } else {
+        logger.error('❌ Erreur du serveur HTTP', { error: err.message });
+        process.exit(1);
+      }
+    });
+
+    // Lancement du serveur
+    const serverInstance = server.listen(PORT, () => {
+      logger.info('====================================================');
+      logger.info('✅ Serveur en ligne !');
+      logger.info(`🌍 Port         : ${PORT}`);
+      logger.info(`🧬 PID          : ${process.pid}`);
+      logger.info(`🔗 URL          : http://localhost:${PORT}`);
+      logger.info(`🏥 Health Check : http://localhost:${PORT}/health`);
+      logger.info('====================================================');
+    });
+
+    // Écoute des événements critiques (crash, Ctrl+C...)
+    setupProcessEventListeners(serverInstance);
+
+  } catch (error) {
+    logger.error('❌ Échec critique du démarrage du serveur', { error: error.message });
+    process.exit(1);
+  }
+}
+
+// --- 8. Lancer ---
+startServer();
