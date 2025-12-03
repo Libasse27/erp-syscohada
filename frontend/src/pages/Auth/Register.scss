@@ -1,0 +1,744 @@
+/**
+ * Styles de la page d'inscription - ERP SYSCOHADA
+ */
+
+// ==============================================================================
+// VARIABLES
+// ==============================================================================
+
+// Couleurs SYSCOHADA
+$primary-blue: #0c4da2;
+$primary-blue-light: #1565c0;
+$accent-gold: #f4b944;
+$bg-light: #f8f9fa;
+$white: #ffffff;
+$text-dark: #212529;
+$text-muted: #6c757d;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #17a2b8;
+
+// Breakpoints
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Transitions
+$transition-smooth: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+
+// ==============================================================================
+// PAGE PRINCIPALE
+// ==============================================================================
+
+.register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-light 0%, #e9ecef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+.register-container {
+  width: 100%;
+  max-width: 1400px;
+  animation: fadeInUp 0.6s ease;
+}
+
+// ==============================================================================
+// EN-TÊTE
+// ==============================================================================
+
+.register-header {
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.6s ease;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: $text-dark;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.5rem 1rem;
+  background: $white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: $transition-fast;
+
+  &:hover {
+    background: $primary-blue;
+    color: $white;
+    transform: translateX(-4px);
+    box-shadow: 0 4px 12px rgba($primary-blue, 0.2);
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// ==============================================================================
+// CONTENU PRINCIPAL
+// ==============================================================================
+
+.register-content {
+  display: flex;
+  flex-direction: row;
+  background: $white;
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(12, 77, 162, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  min-height: 700px;
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    min-height: auto;
+  }
+}
+
+// ==============================================================================
+// PANNEAU INFORMATIONS (GAUCHE)
+// ==============================================================================
+
+.register-info-panel {
+  flex: 1;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-blue-light 100%);
+  padding: 3rem 2.5rem;
+  color: $white;
+  position: relative;
+  overflow: hidden;
+
+  // Pattern de fond
+  &::before {
+    content: '';
+    position: absolute;
+    top: -30%;
+    right: -30%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 15s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -40%;
+    left: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(244, 185, 68, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 20s ease-in-out infinite reverse;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    padding: 2.5rem 2rem;
+  }
+}
+
+.info-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+// --- En-tête info ---
+.info-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  animation: fadeIn 0.8s ease 0.2s backwards;
+}
+
+.logo-wrapper {
+  margin: 0 auto 1.5rem;
+  width: 100px;
+  height: 100px;
+  animation: scaleIn 0.6s ease 0.4s backwards;
+
+  .logo-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  }
+}
+
+.info-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  @media (max-width: $breakpoint-lg) {
+    font-size: 1.875rem;
+  }
+}
+
+.info-subtitle {
+  font-size: 1.0625rem;
+  font-weight: 300;
+  opacity: 0.95;
+  margin-bottom: 0;
+}
+
+// --- Liste d'avantages ---
+.benefits-list {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: $breakpoint-lg) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.benefit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: $transition-smooth;
+  animation: fadeInLeft 0.6s ease backwards;
+
+  @for $i from 1 through 4 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{0.1s * $i + 0.3s};
+    }
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+    border-color: rgba($accent-gold, 0.3);
+  }
+}
+
+.benefit-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $accent-gold;
+  font-size: 1.5rem;
+
+  .benefit-item:hover & {
+    animation: bounce 0.6s ease;
+  }
+}
+
+.benefit-text {
+  flex: 1;
+
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: $white;
+  }
+
+  p {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+    opacity: 0.85;
+    line-height: 1.4;
+  }
+}
+
+// --- Statistiques ---
+.stats-section {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  animation: fadeIn 1s ease 0.8s backwards;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $accent-gold;
+  margin-bottom: 0.25rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+// ==============================================================================
+// PANNEAU FORMULAIRE (DROITE)
+// ==============================================================================
+
+.register-form-panel {
+  flex: 0 0 540px;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: $white;
+
+  @media (max-width: $breakpoint-xl) {
+    flex: 0 0 480px;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    flex: 1;
+    padding: 2.5rem 2rem;
+  }
+}
+
+.form-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: fadeInRight 0.6s ease 0.3s backwards;
+}
+
+// --- En-tête formulaire ---
+.form-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  font-size: 0.95rem;
+  color: $text-muted;
+  margin-bottom: 0;
+}
+
+// --- Formulaire ---
+.register-form {
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: $primary-blue;
+    }
+
+    .text-muted {
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+  }
+
+  .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.625rem 1rem;
+    font-size: 0.95rem;
+    transition: $transition-fast;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 0.2rem rgba($primary-blue, 0.1);
+    }
+
+    &.is-valid {
+      border-color: $success;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba($success, 0.1);
+      }
+    }
+
+    &.is-invalid {
+      border-color: $danger;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba($danger, 0.1);
+      }
+    }
+  }
+
+  .input-group {
+    .form-control {
+      border-right: none;
+
+      &:focus {
+        border-right: none;
+      }
+    }
+
+    .btn-outline-secondary {
+      border: 2px solid #e9ecef;
+      border-left: none;
+      background: $white;
+      color: $text-muted;
+      border-radius: 0 10px 10px 0;
+      padding: 0 1rem;
+
+      &:hover {
+        background: $bg-light;
+        color: $primary-blue;
+        border-color: #e9ecef;
+      }
+
+      &:focus {
+        box-shadow: none;
+        border-color: $primary-blue;
+      }
+    }
+  }
+
+  .invalid-feedback {
+    font-size: 0.85rem;
+    margin-top: 0.375rem;
+  }
+
+  .row {
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+
+    > [class*='col-'] {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
+}
+
+// --- Indicateur de force du mot de passe ---
+.password-strength {
+  .strength-bar {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.375rem;
+  }
+
+  .strength-fill {
+    height: 100%;
+    transition: $transition-smooth;
+    border-radius: 2px;
+
+    &.strength-danger {
+      background: $danger;
+    }
+
+    &.strength-warning {
+      background: $warning;
+    }
+
+    &.strength-info {
+      background: $info;
+    }
+
+    &.strength-success {
+      background: $success;
+    }
+  }
+
+  small {
+    font-weight: 500;
+    font-size: 0.8125rem;
+  }
+}
+
+// --- Checkbox personnalisée ---
+.custom-checkbox {
+  .form-check-input {
+    cursor: pointer;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.125rem;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 0.2rem rgba($primary-blue, 0.1);
+    }
+
+    &:checked {
+      background-color: $primary-blue;
+      border-color: $primary-blue;
+    }
+  }
+
+  .form-check-label {
+    font-size: 0.9rem;
+    color: $text-dark;
+    cursor: pointer;
+    line-height: 1.5;
+    margin-left: 0.25rem;
+  }
+
+  .text-link {
+    color: $primary-blue;
+    text-decoration: none;
+    font-weight: 500;
+    transition: $transition-fast;
+
+    &:hover {
+      color: $primary-blue-light;
+      text-decoration: underline;
+    }
+  }
+}
+
+// --- Bouton d'inscription ---
+.register-button {
+  margin-top: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-blue-light 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba($primary-blue, 0.25);
+  transition: $transition-smooth;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($primary-blue, 0.35);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// --- Lien de connexion ---
+.login-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: $text-muted;
+
+  span {
+    margin-right: 0.375rem;
+  }
+}
+
+.signin-link {
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 600;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $primary-blue-light;
+    text-decoration: underline;
+  }
+}
+
+// --- Copyright ---
+.copyright {
+  text-align: center;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  animation: fadeIn 1s ease 0.6s backwards;
+
+  p {
+    font-size: 0.85rem;
+    color: $text-muted;
+  }
+}
+
+// ==============================================================================
+// ANIMATIONS
+// ==============================================================================
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+// ==============================================================================
+// RESPONSIVE
+// ==============================================================================
+
+@media (max-width: $breakpoint-lg) {
+  .register-info-panel {
+    min-height: 400px;
+  }
+
+  .info-header {
+    margin-bottom: 2rem;
+  }
+
+  .logo-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .stats-section {
+    padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .register-page {
+    padding: 0.5rem;
+  }
+
+  .register-header {
+    margin-bottom: 1rem;
+  }
+
+  .register-content {
+    border-radius: 16px;
+  }
+
+  .register-info-panel {
+    padding: 2rem 1.5rem;
+    min-height: 350px;
+  }
+
+  .info-title {
+    font-size: 1.625rem;
+  }
+
+  .info-subtitle {
+    font-size: 0.9375rem;
+  }
+
+  .register-form-panel {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.625rem;
+  }
+
+  .stat-number {
+    font-size: 1.625rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+
+  .register-form {
+    .row {
+      > [class*='col-'] {
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
+}

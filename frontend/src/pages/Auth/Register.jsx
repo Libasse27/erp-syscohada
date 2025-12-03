@@ -1,5 +1,5 @@
 /**
- * Page d'inscription
+ * Page d'inscription - ERP SYSCOHADA
  */
 
 import { useState, useEffect } from 'react';
@@ -9,6 +9,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import toast from 'react-hot-toast';
 import { register, clearError } from '../../store/slices/authSlice';
+import './Register.scss';
 
 // Schéma de validation
 const registerSchema = Yup.object().shape({
@@ -30,6 +31,10 @@ const registerSchema = Yup.object().shape({
     ),
   password: Yup.string()
     .min(6, 'Le mot de passe doit contenir au moins 6 caractères')
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
+      'Le mot de passe doit contenir au moins une majuscule, une minuscule et un chiffre'
+    )
     .required('Le mot de passe est requis'),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password'), null], 'Les mots de passe ne correspondent pas')
@@ -66,7 +71,7 @@ const Register = () => {
       // Supprimer confirmPassword avant d'envoyer au backend
       const { confirmPassword, acceptTerms, ...userData } = values;
 
-      const result = await dispatch(register(userData)).unwrap();
+      await dispatch(register(userData)).unwrap();
       toast.success('Inscription réussie ! Bienvenue !');
       navigate('/dashboard');
     } catch (err) {
@@ -74,82 +79,207 @@ const Register = () => {
     }
   };
 
+  // Calculer la force du mot de passe
+  const getPasswordStrength = (password) => {
+    if (!password) return { strength: 0, label: '', color: '' };
+
+    let strength = 0;
+    if (password.length >= 6) strength++;
+    if (password.length >= 10) strength++;
+    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    const levels = [
+      { strength: 1, label: 'Très faible', color: 'danger' },
+      { strength: 2, label: 'Faible', color: 'warning' },
+      { strength: 3, label: 'Moyen', color: 'info' },
+      { strength: 4, label: 'Fort', color: 'success' },
+      { strength: 5, label: 'Très fort', color: 'success' },
+    ];
+
+    return levels[strength - 1] || { strength: 0, label: '', color: '' };
+  };
+
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light py-5">
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-8 col-lg-6">
-            <div className="card shadow-sm">
-              <div className="card-body p-4 p-md-5">
-                {/* Logo et titre */}
-                <div className="text-center mb-4">
-                  <h1 className="h3 mb-2 fw-bold">ERP SYSCOHADA</h1>
-                  <p className="text-muted">Créez votre compte</p>
+    <div className="register-page">
+      <div className="register-container">
+        {/* En-tête avec navigation de retour */}
+        <div className="register-header">
+          <Link to="/login" className="back-link">
+            <i className="bi bi-arrow-left me-2"></i>
+            Retour à la connexion
+          </Link>
+        </div>
+
+        <div className="register-content">
+          {/* Panneau gauche - Informations */}
+          <div className="register-info-panel">
+            <div className="info-content">
+              {/* Logo et titre */}
+              <div className="info-header">
+                <div className="logo-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" className="logo-svg">
+                    <defs>
+                      <linearGradient id="regLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{stopColor: '#ffffff', stopOpacity: 1}} />
+                        <stop offset="100%" style={{stopColor: '#f4b944', stopOpacity: 1}} />
+                      </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="48" fill="url(#regLogoGrad)" stroke="#ffffff" strokeWidth="2"/>
+                    <text x="50" y="62" fontFamily="Inter, Arial, sans-serif" fontSize="36" fontWeight="700" fill="#0c4da2" textAnchor="middle">ERP</text>
+                    <rect x="20" y="70" width="60" height="4" fill="#0c4da2" rx="2"/>
+                  </svg>
+                </div>
+                <h1 className="info-title">Rejoignez ERP SYSCOHADA</h1>
+                <p className="info-subtitle">Créez votre compte et commencez à gérer votre entreprise</p>
+              </div>
+
+              {/* Avantages */}
+              <div className="benefits-list">
+                <div className="benefit-item">
+                  <div className="benefit-icon">
+                    <i className="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div className="benefit-text">
+                    <h4>Gratuit pour démarrer</h4>
+                    <p>Essayez toutes les fonctionnalités sans engagement</p>
+                  </div>
                 </div>
 
-                {/* Formulaire */}
-                <Formik
-                  initialValues={{
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    phone: '',
-                    password: '',
-                    confirmPassword: '',
-                    acceptTerms: false,
-                  }}
-                  validationSchema={registerSchema}
-                  onSubmit={handleSubmit}
-                >
-                  {({ errors, touched }) => (
-                    <Form>
+                <div className="benefit-item">
+                  <div className="benefit-icon">
+                    <i className="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div className="benefit-text">
+                    <h4>Configuration rapide</h4>
+                    <p>Votre entreprise opérationnelle en quelques minutes</p>
+                  </div>
+                </div>
+
+                <div className="benefit-item">
+                  <div className="benefit-icon">
+                    <i className="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div className="benefit-text">
+                    <h4>Support dédié</h4>
+                    <p>Assistance technique en français, disponible 24/7</p>
+                  </div>
+                </div>
+
+                <div className="benefit-item">
+                  <div className="benefit-icon">
+                    <i className="bi bi-check-circle-fill"></i>
+                  </div>
+                  <div className="benefit-text">
+                    <h4>Données sécurisées</h4>
+                    <p>Chiffrement et sauvegardes automatiques inclus</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistiques */}
+              <div className="stats-section">
+                <div className="stat-item">
+                  <div className="stat-number">500+</div>
+                  <div className="stat-label">Entreprises</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">2000+</div>
+                  <div className="stat-label">Utilisateurs</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-number">99.9%</div>
+                  <div className="stat-label">Uptime</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Panneau droit - Formulaire */}
+          <div className="register-form-panel">
+            <div className="form-wrapper">
+              {/* En-tête du formulaire */}
+              <div className="form-header">
+                <h2 className="form-title">Créer votre compte</h2>
+                <p className="form-subtitle">Remplissez vos informations pour commencer</p>
+              </div>
+
+              {/* Formulaire */}
+              <Formik
+                initialValues={{
+                  firstName: '',
+                  lastName: '',
+                  email: '',
+                  phone: '',
+                  password: '',
+                  confirmPassword: '',
+                  acceptTerms: false,
+                }}
+                validationSchema={registerSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ errors, touched, values }) => {
+                  const passwordStrength = getPasswordStrength(values.password);
+
+                  return (
+                    <Form className="register-form">
                       {/* Prénom et Nom */}
                       <div className="row">
-                        <div className="col-md-6 mb-3">
-                          <label htmlFor="firstName" className="form-label">
-                            Prénom
-                          </label>
-                          <Field
-                            type="text"
-                            name="firstName"
-                            id="firstName"
-                            className={`form-control ${
-                              errors.firstName && touched.firstName ? 'is-invalid' : ''
-                            }`}
-                            placeholder="Prénom"
-                          />
-                          <ErrorMessage
-                            name="firstName"
-                            component="div"
-                            className="invalid-feedback"
-                          />
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label htmlFor="firstName" className="form-label">
+                              <i className="bi bi-person me-2"></i>
+                              Prénom
+                            </label>
+                            <Field
+                              type="text"
+                              name="firstName"
+                              id="firstName"
+                              className={`form-control ${
+                                errors.firstName && touched.firstName ? 'is-invalid' : ''
+                              } ${!errors.firstName && touched.firstName ? 'is-valid' : ''}`}
+                              placeholder="Votre prénom"
+                              autoComplete="given-name"
+                            />
+                            <ErrorMessage
+                              name="firstName"
+                              component="div"
+                              className="invalid-feedback"
+                            />
+                          </div>
                         </div>
 
-                        <div className="col-md-6 mb-3">
-                          <label htmlFor="lastName" className="form-label">
-                            Nom
-                          </label>
-                          <Field
-                            type="text"
-                            name="lastName"
-                            id="lastName"
-                            className={`form-control ${
-                              errors.lastName && touched.lastName ? 'is-invalid' : ''
-                            }`}
-                            placeholder="Nom"
-                          />
-                          <ErrorMessage
-                            name="lastName"
-                            component="div"
-                            className="invalid-feedback"
-                          />
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label htmlFor="lastName" className="form-label">
+                              <i className="bi bi-person me-2"></i>
+                              Nom
+                            </label>
+                            <Field
+                              type="text"
+                              name="lastName"
+                              id="lastName"
+                              className={`form-control ${
+                                errors.lastName && touched.lastName ? 'is-invalid' : ''
+                              } ${!errors.lastName && touched.lastName ? 'is-valid' : ''}`}
+                              placeholder="Votre nom"
+                              autoComplete="family-name"
+                            />
+                            <ErrorMessage
+                              name="lastName"
+                              component="div"
+                              className="invalid-feedback"
+                            />
+                          </div>
                         </div>
                       </div>
 
                       {/* Email */}
-                      <div className="mb-3">
+                      <div className="form-group">
                         <label htmlFor="email" className="form-label">
-                          Email
+                          <i className="bi bi-envelope me-2"></i>
+                          Adresse email
                         </label>
                         <Field
                           type="email"
@@ -157,8 +287,9 @@ const Register = () => {
                           id="email"
                           className={`form-control ${
                             errors.email && touched.email ? 'is-invalid' : ''
-                          }`}
-                          placeholder="exemple@email.com"
+                          } ${!errors.email && touched.email ? 'is-valid' : ''}`}
+                          placeholder="exemple@entreprise.sn"
+                          autoComplete="email"
                         />
                         <ErrorMessage
                           name="email"
@@ -168,8 +299,9 @@ const Register = () => {
                       </div>
 
                       {/* Téléphone */}
-                      <div className="mb-3">
+                      <div className="form-group">
                         <label htmlFor="phone" className="form-label">
+                          <i className="bi bi-phone me-2"></i>
                           Téléphone <span className="text-muted">(optionnel)</span>
                         </label>
                         <Field
@@ -178,8 +310,9 @@ const Register = () => {
                           id="phone"
                           className={`form-control ${
                             errors.phone && touched.phone ? 'is-invalid' : ''
-                          }`}
+                          } ${!errors.phone && touched.phone && values.phone ? 'is-valid' : ''}`}
                           placeholder="+221 XX XXX XX XX"
+                          autoComplete="tel"
                         />
                         <ErrorMessage
                           name="phone"
@@ -189,8 +322,9 @@ const Register = () => {
                       </div>
 
                       {/* Mot de passe */}
-                      <div className="mb-3">
+                      <div className="form-group">
                         <label htmlFor="password" className="form-label">
+                          <i className="bi bi-lock me-2"></i>
                           Mot de passe
                         </label>
                         <div className="input-group">
@@ -201,12 +335,14 @@ const Register = () => {
                             className={`form-control ${
                               errors.password && touched.password ? 'is-invalid' : ''
                             }`}
-                            placeholder="••••••••"
+                            placeholder="Créez un mot de passe sécurisé"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
                             className="btn btn-outline-secondary"
                             onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1}
                           >
                             <i className={`bi bi-eye${showPassword ? '-slash' : ''}`}></i>
                           </button>
@@ -216,11 +352,26 @@ const Register = () => {
                             className="invalid-feedback"
                           />
                         </div>
+                        {/* Indicateur de force du mot de passe */}
+                        {values.password && (
+                          <div className="password-strength mt-2">
+                            <div className="strength-bar">
+                              <div
+                                className={`strength-fill strength-${passwordStrength.color}`}
+                                style={{ width: `${(passwordStrength.strength / 5) * 100}%` }}
+                              ></div>
+                            </div>
+                            <small className={`text-${passwordStrength.color}`}>
+                              Force: {passwordStrength.label}
+                            </small>
+                          </div>
+                        )}
                       </div>
 
                       {/* Confirmation mot de passe */}
-                      <div className="mb-3">
+                      <div className="form-group">
                         <label htmlFor="confirmPassword" className="form-label">
+                          <i className="bi bi-lock-fill me-2"></i>
                           Confirmer le mot de passe
                         </label>
                         <div className="input-group">
@@ -229,20 +380,18 @@ const Register = () => {
                             name="confirmPassword"
                             id="confirmPassword"
                             className={`form-control ${
-                              errors.confirmPassword && touched.confirmPassword
-                                ? 'is-invalid'
-                                : ''
-                            }`}
-                            placeholder="••••••••"
+                              errors.confirmPassword && touched.confirmPassword ? 'is-invalid' : ''
+                            } ${!errors.confirmPassword && touched.confirmPassword && values.confirmPassword ? 'is-valid' : ''}`}
+                            placeholder="Confirmez votre mot de passe"
+                            autoComplete="new-password"
                           />
                           <button
                             type="button"
                             className="btn btn-outline-secondary"
                             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            tabIndex={-1}
                           >
-                            <i
-                              className={`bi bi-eye${showConfirmPassword ? '-slash' : ''}`}
-                            ></i>
+                            <i className={`bi bi-eye${showConfirmPassword ? '-slash' : ''}`}></i>
                           </button>
                           <ErrorMessage
                             name="confirmPassword"
@@ -253,8 +402,8 @@ const Register = () => {
                       </div>
 
                       {/* Accepter les conditions */}
-                      <div className="mb-4">
-                        <div className="form-check">
+                      <div className="form-group">
+                        <div className="form-check custom-checkbox">
                           <Field
                             type="checkbox"
                             name="acceptTerms"
@@ -265,18 +414,18 @@ const Register = () => {
                           />
                           <label htmlFor="acceptTerms" className="form-check-label">
                             J'accepte les{' '}
-                            <Link to="/terms" className="text-decoration-none">
+                            <Link to="/terms" className="text-link" target="_blank">
                               conditions d'utilisation
                             </Link>{' '}
                             et la{' '}
-                            <Link to="/privacy" className="text-decoration-none">
+                            <Link to="/privacy" className="text-link" target="_blank">
                               politique de confidentialité
                             </Link>
                           </label>
                           <ErrorMessage
                             name="acceptTerms"
                             component="div"
-                            className="invalid-feedback"
+                            className="invalid-feedback d-block"
                           />
                         </div>
                       </div>
@@ -284,7 +433,7 @@ const Register = () => {
                       {/* Bouton d'inscription */}
                       <button
                         type="submit"
-                        className="btn btn-primary w-100 mb-3"
+                        className="btn btn-primary w-100 register-button"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -294,29 +443,32 @@ const Register = () => {
                               role="status"
                               aria-hidden="true"
                             ></span>
-                            Inscription...
+                            Création du compte...
                           </>
                         ) : (
-                          'S\'inscrire'
+                          <>
+                            <i className="bi bi-person-plus me-2"></i>
+                            Créer mon compte
+                          </>
                         )}
                       </button>
 
                       {/* Lien vers connexion */}
-                      <div className="text-center">
-                        <span className="text-muted">Vous avez déjà un compte ? </span>
-                        <Link to="/login" className="text-decoration-none">
+                      <div className="login-link">
+                        <span>Vous avez déjà un compte ?</span>
+                        <Link to="/login" className="signin-link">
                           Se connecter
                         </Link>
                       </div>
                     </Form>
-                  )}
-                </Formik>
-              </div>
+                  );
+                }}
+              </Formik>
             </div>
 
-            {/* Footer */}
-            <div className="text-center mt-4">
-              <p className="text-muted small">
+            {/* Copyright */}
+            <div className="copyright">
+              <p className="mb-0">
                 &copy; {new Date().getFullYear()} ERP SYSCOHADA. Tous droits réservés.
               </p>
             </div>

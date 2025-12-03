@@ -1,0 +1,652 @@
+/**
+ * Styles de la page de connexion - Page de garde ERP SYSCOHADA
+ */
+
+// ==============================================================================
+// VARIABLES
+// ==============================================================================
+
+// Couleurs SYSCOHADA
+$primary-blue: #0c4da2;
+$primary-blue-light: #1565c0;
+$accent-gold: #f4b944;
+$bg-light: #f8f9fa;
+$white: #ffffff;
+$text-dark: #212529;
+$text-muted: #6c757d;
+
+// Breakpoints
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
+// Transitions
+$transition-smooth: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+
+// ==============================================================================
+// PAGE PRINCIPALE
+// ==============================================================================
+
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $bg-light 0%, #e9ecef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  overflow-x: hidden;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 1400px;
+  display: flex;
+  flex-direction: row;
+  background: $white;
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(12, 77, 162, 0.12),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  min-height: 700px;
+  animation: fadeInUp 0.6s ease;
+
+  @media (max-width: $breakpoint-lg) {
+    flex-direction: column;
+    max-width: 600px;
+    min-height: auto;
+  }
+}
+
+// ==============================================================================
+// PANNEAU DE PRÉSENTATION (GAUCHE)
+// ==============================================================================
+
+.login-presentation {
+  flex: 1;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-blue-light 100%);
+  padding: 3rem 2.5rem;
+  color: $white;
+  position: relative;
+  overflow: hidden;
+
+  // Pattern de fond
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 15s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -30%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(244, 185, 68, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: pulse 20s ease-in-out infinite reverse;
+  }
+
+  @media (max-width: $breakpoint-lg) {
+    padding: 2.5rem 2rem;
+  }
+}
+
+.presentation-content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+// --- En-tête de présentation ---
+.presentation-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: fadeIn 0.8s ease 0.2s backwards;
+}
+
+.logo-wrapper {
+  margin: 0 auto 1.5rem;
+  width: 120px;
+  height: 120px;
+  animation: scaleIn 0.6s ease 0.4s backwards;
+
+  .logo-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+  }
+}
+
+.presentation-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  @media (max-width: $breakpoint-lg) {
+    font-size: 2rem;
+  }
+}
+
+.presentation-subtitle {
+  font-size: 1.125rem;
+  font-weight: 300;
+  opacity: 0.95;
+  margin-bottom: 0;
+}
+
+// --- Liste de fonctionnalités ---
+.features-list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+
+  @media (max-width: $breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: $transition-smooth;
+  animation: fadeInLeft 0.6s ease backwards;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{0.1s * $i + 0.3s};
+    }
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+    border-color: rgba($accent-gold, 0.3);
+  }
+}
+
+.feature-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba($accent-gold, 0.2);
+  border-radius: 12px;
+  color: $accent-gold;
+  font-size: 1.5rem;
+  transition: $transition-smooth;
+
+  .feature-item:hover & {
+    background: $accent-gold;
+    color: $primary-blue;
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+.feature-content {
+  flex: 1;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: $white;
+  }
+
+  p {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+    opacity: 0.85;
+    line-height: 1.4;
+  }
+}
+
+// --- Footer de présentation ---
+.presentation-footer {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  animation: fadeIn 1s ease 0.8s backwards;
+
+  p {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+  }
+}
+
+// ==============================================================================
+// PANNEAU FORMULAIRE (DROITE)
+// ==============================================================================
+
+.login-form-panel {
+  flex: 0 0 480px;
+  padding: 3rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: $white;
+
+  @media (max-width: $breakpoint-lg) {
+    flex: 1;
+    padding: 2.5rem 2rem;
+  }
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fadeInRight 0.6s ease 0.3s backwards;
+}
+
+// --- En-tête du formulaire ---
+.form-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  font-size: 0.95rem;
+  color: $text-muted;
+  margin-bottom: 0;
+}
+
+// --- Formulaire ---
+.login-form {
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      color: $primary-blue;
+    }
+  }
+
+  .form-control {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    transition: $transition-fast;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 0.2rem rgba($primary-blue, 0.1);
+    }
+
+    &.is-valid {
+      border-color: #28a745;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(#28a745, 0.1);
+      }
+    }
+
+    &.is-invalid {
+      border-color: #dc3545;
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(#dc3545, 0.1);
+      }
+    }
+  }
+
+  .input-group {
+    .form-control {
+      border-right: none;
+
+      &:focus {
+        border-right: none;
+      }
+    }
+
+    .btn-outline-secondary {
+      border: 2px solid #e9ecef;
+      border-left: none;
+      background: $white;
+      color: $text-muted;
+      border-radius: 0 10px 10px 0;
+      padding: 0 1rem;
+
+      &:hover {
+        background: $bg-light;
+        color: $primary-blue;
+        border-color: #e9ecef;
+      }
+
+      &:focus {
+        box-shadow: none;
+        border-color: $primary-blue;
+      }
+    }
+  }
+
+  .invalid-feedback {
+    font-size: 0.85rem;
+    margin-top: 0.375rem;
+  }
+}
+
+// --- Options du formulaire ---
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.75rem;
+
+  .form-check-label {
+    font-size: 0.9rem;
+    color: $text-dark;
+    cursor: pointer;
+  }
+
+  .form-check-input {
+    cursor: pointer;
+
+    &:focus {
+      border-color: $primary-blue;
+      box-shadow: 0 0 0 0.2rem rgba($primary-blue, 0.1);
+    }
+
+    &:checked {
+      background-color: $primary-blue;
+      border-color: $primary-blue;
+    }
+  }
+}
+
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 500;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $primary-blue-light;
+    text-decoration: underline;
+  }
+}
+
+// --- Bouton de connexion ---
+.login-button {
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $primary-blue 0%, $primary-blue-light 100%);
+  border: none;
+  box-shadow: 0 4px 12px rgba($primary-blue, 0.25);
+  transition: $transition-smooth;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba($primary-blue, 0.35);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 1.1rem;
+  }
+}
+
+// --- Lien d'inscription ---
+.signup-link {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: $text-muted;
+
+  span {
+    margin-right: 0.375rem;
+  }
+}
+
+.register-link {
+  color: $primary-blue;
+  text-decoration: none;
+  font-weight: 600;
+  transition: $transition-fast;
+
+  &:hover {
+    color: $primary-blue-light;
+    text-decoration: underline;
+  }
+}
+
+// --- Footer du formulaire ---
+.form-footer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e9ecef;
+}
+
+.demo-info {
+  text-align: center;
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, rgba($primary-blue, 0.08) 0%, rgba($accent-gold, 0.08) 100%);
+  border: 1px solid rgba($primary-blue, 0.2);
+  border-radius: 8px;
+  color: $primary-blue;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+// --- Copyright ---
+.copyright {
+  text-align: center;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  animation: fadeIn 1s ease 0.6s backwards;
+
+  p {
+    font-size: 0.85rem;
+    color: $text-muted;
+  }
+
+  .text-danger {
+    animation: heartbeat 1.5s ease infinite;
+  }
+}
+
+// ==============================================================================
+// ANIMATIONS
+// ==============================================================================
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  10%, 30% {
+    transform: scale(1.1);
+  }
+  20%, 40% {
+    transform: scale(1);
+  }
+}
+
+// ==============================================================================
+// RESPONSIVE
+// ==============================================================================
+
+@media (max-width: $breakpoint-lg) {
+  .login-presentation {
+    min-height: 400px;
+  }
+
+  .presentation-header {
+    margin-bottom: 2rem;
+  }
+
+  .logo-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+
+  .features-list {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .login-page {
+    padding: 0.5rem;
+  }
+
+  .login-container {
+    border-radius: 16px;
+  }
+
+  .login-presentation {
+    padding: 2rem 1.5rem;
+    min-height: 350px;
+  }
+
+  .presentation-title {
+    font-size: 1.75rem;
+  }
+
+  .presentation-subtitle {
+    font-size: 1rem;
+  }
+
+  .login-form-panel {
+    padding: 2rem 1.5rem;
+  }
+
+  .form-title {
+    font-size: 1.75rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}
