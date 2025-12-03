@@ -11,8 +11,9 @@ import store from './store/store';
 import App from './App';
 
 // Import des styles
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './styles/theme.scss'; // Thème Bootstrap personnalisé (remplace bootstrap.min.css)
+import './styles/layout.scss'; // Styles du layout (Header, Sidebar, Footer)
 import './styles/variables.css';
 import './styles/custom-bootstrap.css';
 import './styles/index.css';
