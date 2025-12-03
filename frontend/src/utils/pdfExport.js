@@ -276,6 +276,66 @@ export const generateIncomeStatementPDF = async (data, company) => {
 };
 
 /**
+ * Generic export data to PDF
+ * @param {Array} data - Array of data to export
+ * @param {Array} columns - Column definitions
+ * @param {string} title - Document title
+ * @param {string} filename - Filename without extension
+ * @param {Object} company - Company information (optional)
+ */
+export const exportToPDF = async (data, columns, title, filename = 'export', company = {}) => {
+  const { jsPDF } = await import('jspdf');
+  await import('jspdf-autotable');
+
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let yPosition = 20;
+
+  // Company Header (if provided)
+  if (company.name) {
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text(company.name, 20, yPosition);
+    yPosition += 10;
+  }
+
+  // Title
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text(title, pageWidth / 2, yPosition, { align: 'center' });
+  yPosition += 10;
+
+  // Date
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`, pageWidth - 20, yPosition, { align: 'right' });
+  yPosition += 10;
+
+  // Prepare table data
+  const headers = columns.map(col => col.header || col.label || col);
+  const tableData = data.map(row => {
+    return columns.map(col => {
+      const key = col.accessor || col.key || col;
+      const value = typeof key === 'function' ? key(row) : row[key];
+      return value != null ? String(value) : '';
+    });
+  });
+
+  // Generate table
+  doc.autoTable({
+    startY: yPosition,
+    head: [headers],
+    body: tableData,
+    theme: 'striped',
+    headStyles: { fillColor: [59, 130, 246] },
+    styles: { fontSize: 8 },
+  });
+
+  // Download
+  doc.save(`${filename}.pdf`);
+};
+
+/**
  * Download PDF blob
  * @param {Blob} blob - PDF blob
  * @param {string} filename - Filename
