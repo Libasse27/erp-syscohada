@@ -146,6 +146,18 @@ export const downloadInvoicePDF = createAsyncThunk(
   }
 );
 
+export const updateInvoiceStatus = createAsyncThunk(
+  'invoices/updateInvoiceStatus',
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      const response = await invoiceService.updateStatus(id, status);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 // Slice
 const invoiceSlice = createSlice({
   name: 'invoices',
@@ -306,6 +318,26 @@ const invoiceSlice = createSlice({
         state.loading = false;
       })
       .addCase(downloadInvoicePDF.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update invoice status
+      .addCase(updateInvoiceStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateInvoiceStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.invoices.findIndex((i) => i._id === action.payload._id);
+        if (index !== -1) {
+          state.invoices[index] = action.payload;
+        }
+        if (state.currentInvoice?._id === action.payload._id) {
+          state.currentInvoice = action.payload;
+        }
+      })
+      .addCase(updateInvoiceStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

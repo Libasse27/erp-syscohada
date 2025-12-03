@@ -19,13 +19,13 @@ const invoiceService = {
     return response.data;
   },
 
-  // Créer une nouvelle facture
+  // Crï¿½er une nouvelle facture
   create: async (invoiceData) => {
     const response = await api.post(INVOICE_API, invoiceData);
     return response.data;
   },
 
-  // Mettre à jour une facture
+  // Mettre ï¿½ jour une facture
   update: async (id, invoiceData) => {
     const response = await api.put(`${INVOICE_API}/${id}`, invoiceData);
     return response.data;
@@ -43,6 +43,12 @@ const invoiceService = {
     return response.data;
   },
 
+  // Mettre Ã  jour le statut d'une facture
+  updateStatus: async (id, status) => {
+    const response = await api.patch(`${INVOICE_API}/${id}/status`, { status });
+    return response.data;
+  },
+
   // Obtenir les factures en retard
   getOverdue: async () => {
     const response = await api.get(`${INVOICE_API}/overdue`);
@@ -55,7 +61,7 @@ const invoiceService = {
     return response.data;
   },
 
-  // Télécharger une facture en PDF
+  // Tï¿½lï¿½charger une facture en PDF
   downloadPDF: async (id) => {
     const response = await api.get(`${INVOICE_API}/${id}/pdf`, {
       responseType: 'blob',
