@@ -1,0 +1,18 @@
+/**
+ * Point d'entrée principal pour les styles de l'application.
+ * L'ordre d'importation est crucial pour la cascade des styles.
+ */
+
+// 1. Variables CSS (doivent être disponibles pour les autres fichiers)
+@import './variables.css';
+
+// 2. Librairies externes et thèmes
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import './theme.scss'; // Thème Bootstrap personnalisé
+@import './custom-bootstrap.css'; // Surcharges Bootstrap
+
+// 3. Styles de l'application
+@import './index.css'; // Styles globaux
+@import './layout.scss'; // Styles du layout (Header, Sidebar, Footer)
+@import './dashboard.css'; // Styles spécifiques au dashboard
+@import './compatibility.css'; // Styles de compatibilité (à charger en dernier si nécessaire)
