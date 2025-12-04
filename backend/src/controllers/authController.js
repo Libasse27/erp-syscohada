@@ -57,6 +57,11 @@ export const register = async (req, res, next) => {
       return next(new AppError('Un utilisateur avec cet email existe déjà', 400));
     }
 
+    // Vérifier si c'est le premier utilisateur (il devient automatiquement admin)
+    const userCount = await User.countDocuments();
+    const isFirstUser = userCount === 0;
+    const userRole = isFirstUser ? 'admin' : (role || 'user');
+
     // Créer l'utilisateur
     const user = await User.create({
       firstName,
@@ -64,7 +69,7 @@ export const register = async (req, res, next) => {
       email,
       password,
       phone,
-      role: role || 'user',
+      role: userRole,
     });
 
     // Générer les tokens
@@ -78,11 +83,17 @@ export const register = async (req, res, next) => {
     // Envoyer le refresh token dans un cookie httpOnly
     res.cookie('refreshToken', refreshToken, cookieOptions);
 
-    logger.info(`Nouvel utilisateur inscrit: ${user.email}`);
+    if (isFirstUser) {
+      logger.info(`Premier utilisateur inscrit en tant qu'ADMINISTRATEUR: ${user.email}`);
+    } else {
+      logger.info(`Nouvel utilisateur inscrit: ${user.email} (rôle: ${userRole})`);
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Inscription réussie',
+      message: isFirstUser
+        ? 'Inscription réussie ! Vous êtes le premier utilisateur et avez été nommé Administrateur.'
+        : 'Inscription réussie',
       data: {
         user: user.toPublicJSON(),
         accessToken,

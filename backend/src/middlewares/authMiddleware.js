@@ -45,9 +45,11 @@ export const protect = async (req, res, next) => {
       next();
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
-        return next(new AppError('Token expiré. Veuillez vous reconnecter.', 401));
+        logger.info(`Token expiré pour une requête vers ${req.originalUrl}`);
+        return next(new AppError('Token expiré', 401));
       }
       if (error.name === 'JsonWebTokenError') {
+        logger.warn(`Token invalide reçu: ${token?.substring(0, 20)}...`);
         return next(new AppError('Token invalide', 401));
       }
       throw error;

@@ -71,8 +71,12 @@ const Register = () => {
       // Supprimer confirmPassword avant d'envoyer au backend
       const { confirmPassword, acceptTerms, ...userData } = values;
 
-      await dispatch(register(userData)).unwrap();
-      toast.success('Inscription réussie ! Bienvenue !');
+      const result = await dispatch(register(userData)).unwrap();
+
+      // Afficher le message personnalisé du serveur ou le message par défaut
+      const message = result.message || 'Inscription réussie ! Bienvenue !';
+      toast.success(message, { duration: 5000 });
+
       navigate('/dashboard');
     } catch (err) {
       // L'erreur est déjà gérée par le useEffect ci-dessus
