@@ -1,6 +1,6 @@
 /**
- * Variables CSS personnalis�es pour l'application ERP SYSCOHADA
- * Compatible avec le th�me clair et sombre
+ * Variables CSS personnalisées pour l'application ERP SYSCOHADA
+ * Compatible avec le thème clair et sombre
  */
 
 :root {
@@ -14,7 +14,7 @@
   --color-secondary-light: #868e96;
   --color-secondary-dark: #495057;
 
-  /* === Couleurs S�mantiques === */
+  /* === Couleurs Sémantiques === */
   --color-success: #10b981;
   --color-success-light: #34d399;
   --color-success-dark: #059669;
@@ -67,6 +67,7 @@
   --border-radius-md: 0.5rem;
   --border-radius-lg: 0.75rem;
   --border-radius-xl: 1rem;
+  --border-radius-2xl: 1.5rem;
   --border-radius-full: 9999px;
 
   /* === Ombres === */
@@ -76,24 +77,38 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
 
   /* === Espacements === */
   --spacing-0: 0;
-  --spacing-1: 0.25rem;   /* 4px */
-  --spacing-2: 0.5rem;    /* 8px */
-  --spacing-3: 0.75rem;   /* 12px */
-  --spacing-4: 1rem;      /* 16px */
-  --spacing-5: 1.25rem;   /* 20px */
-  --spacing-6: 1.5rem;    /* 24px */
-  --spacing-8: 2rem;      /* 32px */
-  --spacing-10: 2.5rem;   /* 40px */
-  --spacing-12: 3rem;     /* 48px */
-  --spacing-16: 4rem;     /* 64px */
-  --spacing-20: 5rem;     /* 80px */
+  --spacing-px: 1px;
+  --spacing-0-5: 0.125rem;  /* 2px */
+  --spacing-1: 0.25rem;     /* 4px */
+  --spacing-1-5: 0.375rem;  /* 6px */
+  --spacing-2: 0.5rem;      /* 8px */
+  --spacing-2-5: 0.625rem;  /* 10px */
+  --spacing-3: 0.75rem;     /* 12px */
+  --spacing-3-5: 0.875rem;  /* 14px */
+  --spacing-4: 1rem;        /* 16px */
+  --spacing-5: 1.25rem;     /* 20px */
+  --spacing-6: 1.5rem;      /* 24px */
+  --spacing-7: 1.75rem;     /* 28px */
+  --spacing-8: 2rem;        /* 32px */
+  --spacing-9: 2.25rem;     /* 36px */
+  --spacing-10: 2.5rem;     /* 40px */
+  --spacing-11: 2.75rem;    /* 44px */
+  --spacing-12: 3rem;       /* 48px */
+  --spacing-14: 3.5rem;     /* 56px */
+  --spacing-16: 4rem;       /* 64px */
+  --spacing-20: 5rem;       /* 80px */
+  --spacing-24: 6rem;       /* 96px */
+  --spacing-28: 7rem;       /* 112px */
+  --spacing-32: 8rem;       /* 128px */
 
   /* === Typographie === */
   --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-family-mono: 'Fira Code', 'Courier New', monospace;
+  --font-family-mono: 'Fira Code', 'Courier New', Consolas, Monaco, monospace;
+  --font-family-heading: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   --font-size-xs: 0.75rem;      /* 12px */
   --font-size-sm: 0.875rem;     /* 14px */
@@ -104,31 +119,46 @@
   --font-size-3xl: 1.875rem;    /* 30px */
   --font-size-4xl: 2.25rem;     /* 36px */
   --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.75rem;     /* 60px */
+  --font-size-7xl: 4.5rem;      /* 72px */
 
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --font-weight-extrabold: 800;
+  --font-weight-black: 900;
 
+  --line-height-none: 1;
   --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
   --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
+  --line-height-relaxed: 1.625;
   --line-height-loose: 2;
 
+  --letter-spacing-tighter: -0.05em;
   --letter-spacing-tight: -0.025em;
   --letter-spacing-normal: 0;
   --letter-spacing-wide: 0.025em;
   --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
 
   /* === Transitions === */
+  --transition-speed-fastest: 100ms;
   --transition-speed-fast: 150ms;
   --transition-speed-base: 300ms;
   --transition-speed-slow: 500ms;
+  --transition-speed-slowest: 700ms;
   --transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-timing-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --transition-timing-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --transition-timing-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* === Z-index === */
+  --z-base: 0;
   --z-dropdown: 1000;
   --z-sticky: 1020;
   --z-fixed: 1030;
@@ -136,6 +166,7 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
+  --z-notification: 1080;
 
   /* === Largeurs === */
   --container-sm: 640px;
@@ -144,20 +175,66 @@
   --container-xl: 1280px;
   --container-2xl: 1536px;
 
-  /* === Sidebar === */
+  /* === Breakpoints (for reference) === */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* === Layout === */
   --sidebar-width: 280px;
   --sidebar-width-collapsed: 80px;
   --header-height: 64px;
+  --footer-height: auto;
 
-  /* === Couleurs Sp�cifiques SYSCOHADA === */
+  /* === Couleurs Spécifiques SYSCOHADA === */
   --color-syscohada-blue: #0d47a1;
   --color-syscohada-green: #2e7d32;
   --color-syscohada-orange: #ef6c00;
+  --color-syscohada-purple: #6a1b9a;
 
-  /* === Couleurs Mobile Money === */
+  /* === Couleurs Mobile Money & Services === */
   --color-orange-money: #ff7900;
   --color-wave: #00bfff;
   --color-free-money: #e30613;
+  --color-joni-joni: #ffd700;
+
+  /* === Couleurs de Statut === */
+  --color-status-draft: var(--color-gray-500);
+  --color-status-pending: var(--color-warning);
+  --color-status-approved: var(--color-success);
+  --color-status-rejected: var(--color-danger);
+  --color-status-paid: var(--color-success);
+  --color-status-unpaid: var(--color-danger);
+  --color-status-partial: var(--color-warning);
+
+  /* === Opacité === */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-25: 0.25;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-75: 0.75;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-95: 0.95;
+  --opacity-100: 1;
+
+  /* === Blur === */
+  --blur-none: 0;
+  --blur-sm: 4px;
+  --blur-base: 8px;
+  --blur-md: 12px;
+  --blur-lg: 16px;
+  --blur-xl: 24px;
+  --blur-2xl: 40px;
+  --blur-3xl: 64px;
 }
 
 /* === Mode Sombre === */
@@ -181,37 +258,133 @@
 
   /* Ajustements des couleurs pour meilleur contraste en mode sombre */
   --color-primary: #3b82f6;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #2563eb;
+
   --color-success: #22c55e;
+  --color-success-light: #4ade80;
+  --color-success-dark: #16a34a;
+
   --color-danger: #f87171;
+  --color-danger-light: #fca5a5;
+  --color-danger-dark: #ef4444;
+
   --color-warning: #fbbf24;
+  --color-warning-light: #fcd34d;
+  --color-warning-dark: #f59e0b;
+
   --color-info: #22d3ee;
+  --color-info-light: #67e8f9;
+  --color-info-dark: #06b6d4;
+
+  /* Ombres Mode Sombre (plus subtiles) */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* === Variables Responsive === */
 @media (max-width: 640px) {
   :root {
     --font-size-base: 0.875rem;
+    --font-size-lg: 1rem;
+    --font-size-xl: 1.125rem;
+    --font-size-2xl: 1.25rem;
+    --font-size-3xl: 1.5rem;
+
     --spacing-4: 0.875rem;
     --spacing-6: 1.25rem;
+    --spacing-8: 1.75rem;
+
     --sidebar-width: 100%;
+    --header-height: 56px;
   }
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
+@media (min-width: 641px) and (max-width: 768px) {
   :root {
     --sidebar-width: 240px;
+    --header-height: 60px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 260px;
   }
 }
 
 /* === Variables Print === */
 @media print {
   :root {
+    --shadow-xs: none;
     --shadow-sm: none;
     --shadow-md: none;
     --shadow-lg: none;
+    --shadow-xl: none;
+    --shadow-2xl: none;
+
     --bg-primary: #ffffff;
     --bg-secondary: #ffffff;
+    --bg-tertiary: #f5f5f5;
+
     --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-tertiary: #666666;
+
     --border-color: #000000;
+    --border-color-dark: #333333;
+
+    --transition-speed-fast: 0ms;
+    --transition-speed-base: 0ms;
+    --transition-speed-slow: 0ms;
   }
+}
+
+/* === Préférence de contraste élevé === */
+@media (prefers-contrast: high) {
+  :root {
+    --border-width: 2px;
+    --border-color: #000000;
+    --text-secondary: #000000;
+  }
+
+  [data-theme="dark"],
+  .dark {
+    --border-color: #ffffff;
+    --text-secondary: #ffffff;
+  }
+}
+
+/* === Préférence de réduction de transparence === */
+@media (prefers-reduced-transparency) {
+  :root {
+    --bg-overlay: rgb(0, 0, 0);
+    --opacity-50: 1;
+    --opacity-75: 1;
+  }
+}
+
+/* === Variables pour animations personnalisées === */
+:root {
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
 }
