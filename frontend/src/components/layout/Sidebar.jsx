@@ -1,5 +1,11 @@
+/**
+ * Sidebar - Menu de navigation latéral
+ * Affiche les liens de navigation principaux et sous-menus
+ */
+
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   toggleSidebar,
   selectSidebarOpen,
@@ -8,6 +14,7 @@ import {
 
 const Sidebar = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const sidebarOpen = useSelector(selectSidebarOpen);
   const sidebarCollapsed = useSelector(selectSidebarCollapsed);
 
@@ -39,9 +46,9 @@ const Sidebar = () => {
         </svg>
       ),
       children: [
-        { title: 'Factures', path: '/invoices' },
-        { title: 'Devis', path: '/quotes' },
-        { title: 'Clients', path: '/customers' },
+        { title: 'Factures', path: '/invoices', icon: '📄' },
+        { title: 'Devis', path: '/quotes', icon: '📋' },
+        { title: 'Clients', path: '/customers', icon: '👥' },
       ],
     },
     {
@@ -57,8 +64,8 @@ const Sidebar = () => {
         </svg>
       ),
       children: [
-        { title: 'Commandes', path: '/purchase-orders' },
-        { title: 'Fournisseurs', path: '/suppliers' },
+        { title: 'Commandes', path: '/purchase-orders', icon: '📦' },
+        { title: 'Fournisseurs', path: '/suppliers', icon: '🏭' },
       ],
     },
     {
@@ -88,8 +95,8 @@ const Sidebar = () => {
         </svg>
       ),
       children: [
-        { title: 'Mouvements', path: '/stock/movements' },
-        { title: 'Inventaire', path: '/stock/inventory' },
+        { title: 'Mouvements', path: '/stock/movements', icon: '↔️' },
+        { title: 'Inventaire', path: '/stock/inventory', icon: '📊' },
       ],
     },
     {
@@ -105,10 +112,10 @@ const Sidebar = () => {
         </svg>
       ),
       children: [
-        { title: 'Comptes', path: '/accounts' },
-        { title: 'Écritures', path: '/entries' },
-        { title: 'Grand livre', path: '/ledger' },
-        { title: 'Balance', path: '/balance' },
+        { title: 'Comptes', path: '/accounts', icon: '💰' },
+        { title: 'Écritures', path: '/entries', icon: '✍️' },
+        { title: 'Grand livre', path: '/ledger', icon: '📖' },
+        { title: 'Balance', path: '/balance', icon: '⚖️' },
       ],
     },
     {
@@ -138,44 +145,64 @@ const Sidebar = () => {
         </svg>
       ),
       children: [
-        { title: 'Ventes', path: '/reports/sales' },
-        { title: 'Achats', path: '/reports/purchases' },
-        { title: 'Trésorerie', path: '/reports/cash-flow' },
-        { title: 'Bilan', path: '/reports/balance-sheet' },
+        { title: 'Ventes', path: '/reports/sales', icon: '📈' },
+        { title: 'Achats', path: '/reports/purchases', icon: '📉' },
+        { title: 'Trésorerie', path: '/reports/cash-flow', icon: '💵' },
+        { title: 'Bilan', path: '/reports/balance-sheet', icon: '📊' },
       ],
     },
   ];
 
+  // MenuItem Component
   const MenuItem = ({ item, isChild = false }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
     const hasChildren = item.children && item.children.length > 0;
+    const isActive = location.pathname === item.path;
+    const isParentActive =
+      hasChildren && item.children.some((child) => location.pathname === child.path);
 
+    // État local pour l'ouverture du sous-menu
+    const [isOpen, setIsOpen] = useState(isParentActive);
+
+    // Gérer les items avec sous-menus
     if (hasChildren) {
       return (
         <div>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`w-full flex items-center justify-between px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${
-              isChild ? 'pl-12' : ''
+            className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg transition-all duration-200 group ${
+              isParentActive
+                ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
           >
             <div className="flex items-center space-x-3">
-              {item.icon}
-              {!sidebarCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+              <div className="flex-shrink-0">{item.icon}</div>
+              {!sidebarCollapsed && (
+                <span className="text-sm font-medium truncate">{item.title}</span>
+              )}
             </div>
             {!sidebarCollapsed && (
               <svg
-                className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 transition-transform duration-200 flex-shrink-0 ${
+                  isOpen ? 'rotate-180' : ''
+                }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             )}
           </button>
+
+          {/* Sous-menu avec animation */}
           {isOpen && !sidebarCollapsed && (
-            <div className="mt-1 space-y-1">
+            <div className="mt-1 ml-4 pl-4 border-l-2 border-gray-200 dark:border-gray-700 space-y-1 animate-slideDown">
               {item.children.map((child, index) => (
                 <MenuItem key={index} item={child} isChild={true} />
               ))}
@@ -185,19 +212,41 @@ const Sidebar = () => {
       );
     }
 
+    // Items simples (sans sous-menus)
     return (
       <NavLink
         to={item.path}
+        onClick={() => dispatch(toggleSidebar())}
         className={({ isActive }) =>
-          `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+          `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 group relative ${
             isActive
-              ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
+              ? 'bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-900/20 text-blue-600 dark:text-blue-400 shadow-sm'
               : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-          } ${isChild ? 'pl-12' : ''}`
+          } ${isChild ? 'text-sm' : ''}`
         }
       >
-        {item.icon}
-        {!sidebarCollapsed && <span className="text-sm font-medium">{item.title}</span>}
+        {/* Indicateur actif */}
+        {isActive && (
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-blue-600 dark:bg-blue-400 rounded-r-full" />
+        )}
+
+        <div className="flex items-center space-x-3 flex-1 min-w-0">
+          {/* Icône pour les sous-items */}
+          {isChild && item.icon && <span className="text-base">{item.icon}</span>}
+          {!isChild && <div className="flex-shrink-0">{item.icon}</div>}
+
+          {/* Titre */}
+          {!sidebarCollapsed && (
+            <span className="font-medium truncate">{item.title}</span>
+          )}
+        </div>
+
+        {/* Badge NEW (optionnel) */}
+        {item.badge && !sidebarCollapsed && (
+          <span className="px-2 py-0.5 text-xs font-semibold bg-red-500 text-white rounded-full">
+            {item.badge}
+          </span>
+        )}
       </NavLink>
     );
   };
@@ -207,33 +256,44 @@ const Sidebar = () => {
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm animate-fadeIn"
           onClick={() => dispatch(toggleSidebar())}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ${
+        className={`fixed top-0 left-0 z-50 h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out shadow-xl lg:shadow-none ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } lg:translate-x-0 ${sidebarCollapsed ? 'w-20' : 'w-64'}`}
       >
         <div className="flex flex-col h-full">
           {/* Sidebar header */}
-          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900">
             {!sidebarCollapsed && (
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg ring-2 ring-blue-200 dark:ring-blue-800">
                   <span className="text-white font-bold text-lg">E</span>
                 </div>
-                <span className="text-xl font-semibold text-gray-800 dark:text-white">ERP</span>
+                <div>
+                  <span className="text-xl font-bold text-gray-800 dark:text-white">ERP</span>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">SYSCOHADA</p>
+                </div>
               </div>
             )}
+
+            {/* Bouton fermer (mobile) */}
             <button
               onClick={() => dispatch(toggleSidebar())}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
+              className="p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700 lg:hidden transition-colors"
+              aria-label="Fermer le menu"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 text-gray-700 dark:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -245,26 +305,89 @@ const Sidebar = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+          <nav className="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
             {menuItems.map((item, index) => (
               <MenuItem key={index} item={item} />
             ))}
           </nav>
 
           {/* Sidebar footer */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-              {!sidebarCollapsed && <p>© 2024 ERP SYSCOHADA</p>}
-              {!sidebarCollapsed && <p className="mt-1">Version 1.0.0</p>}
-            </div>
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+            {!sidebarCollapsed ? (
+              <div className="text-center">
+                <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">
+                  © 2025 ERP SYSCOHADA
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Version 1.0.0</p>
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+                  <span className="text-white text-xs font-bold">v1</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </aside>
+
+      {/* Custom scrollbar styles */}
+      <style jsx="true">{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e0;
+          border-radius: 3px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #a0aec0;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #4a5568;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #718096;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            max-height: 0;
+          }
+          to {
+            opacity: 1;
+            max-height: 500px;
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+
+        .animate-slideDown {
+          animation: slideDown 0.3s ease-out;
+        }
+      `}</style>
     </>
   );
 };
-
-// Add React import at the top if not using automatic runtime
-import React from 'react';
 
 export default Sidebar;
