@@ -70,3 +70,4 @@ data/
 .sass-cache/
 connect.lock
 typings/
+cookies.txt

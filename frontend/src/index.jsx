@@ -10,13 +10,15 @@ import { Toaster } from 'react-hot-toast';
 import store from './store/store';
 import App from './App';
 
-// Import des styles
+// Import des styles (ordre important!)
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './styles/theme.scss'; // Thème Bootstrap personnalisé (remplace bootstrap.min.css)
 import './styles/layout.scss'; // Styles du layout (Header, Sidebar, Footer)
-import './styles/variables.css';
-import './styles/custom-bootstrap.css';
-import './styles/index.css';
+import './styles/variables.css'; // Variables CSS
+import './styles/compatibility.css'; // Compatibilité Bootstrap/Tailwind
+import './styles/custom-bootstrap.css'; // Personnalisations Bootstrap
+import './styles/index.css'; // Styles globaux
+import './styles/dashboard.css'; // Styles dashboard
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
