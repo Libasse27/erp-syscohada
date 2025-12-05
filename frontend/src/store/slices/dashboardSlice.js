@@ -65,16 +65,49 @@ export const fetchDashboardData = createAsyncThunk(
         customersData,
         chartData,
       ] = await Promise.all([
-        dashboardService.getStats(),
-        dashboardService.getAlerts(),
-        dashboardService.getRecentActivities(10),
-        dashboardService.getTopProducts(5),
-        dashboardService.getTopCustomers(5),
-        dashboardService.getSalesChart({ period }),
+        dashboardService.getStats().catch(() => ({
+          totalCustomers: 0,
+          totalProducts: 0,
+          yearRevenue: 0,
+          pendingInvoices: 0,
+        })),
+        dashboardService.getAlerts().catch(() => []),
+        dashboardService.getRecentActivities(10).catch(() => []),
+        dashboardService.getTopProducts(5).catch(() => []),
+        dashboardService.getTopCustomers(5).catch(() => []),
+        dashboardService.getSalesChart({ period }).catch(() => ({ labels: [], data: [] })),
       ]);
 
+      // Transformer les stats du backend vers le format attendu par le frontend
+      const formattedStats = {
+        sales: {
+          total: statsData.yearRevenue || 0,
+          percentage: 0,
+          trend: 'up'
+        },
+        purchases: {
+          total: 0,
+          percentage: 0,
+          trend: 'up'
+        },
+        inventory: {
+          total: statsData.totalProducts || 0,
+          percentage: 0,
+          trend: 'up'
+        },
+        customers: {
+          total: statsData.totalCustomers || 0,
+          percentage: 0,
+          trend: 'up'
+        },
+        revenue: statsData.yearRevenue || 0,
+        profit: 0,
+        expenses: 0,
+        profitMargin: 0,
+      };
+
       return {
-        stats: statsData,
+        stats: formattedStats,
         alerts: alertsData,
         recentActivities: activitiesData,
         topProducts: productsData,
@@ -84,7 +117,7 @@ export const fetchDashboardData = createAsyncThunk(
       };
     } catch (error) {
       return rejectWithValue(
-        error.response?.data?.error || 'Erreur lors du chargement du tableau de bord'
+        error.response?.data?.error || error.message || 'Erreur lors du chargement du tableau de bord'
       );
     }
   }

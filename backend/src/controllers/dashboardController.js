@@ -139,10 +139,45 @@ export const getTopCustomers = async (req, res, next) => {
   try {
     const { limit = 5 } = req.query;
 
-    const topCustomers = await Customer.findTopCustomers(
-      req.user.company,
-      parseInt(limit)
-    );
+    // Utiliser une agrégation pour calculer le total des ventes par client
+    const topCustomers = await Invoice.aggregate([
+      {
+        $match: {
+          company: req.user.company,
+          type: 'sale',
+          status: { $ne: 'cancelled' },
+        },
+      },
+      {
+        $group: {
+          _id: '$customer',
+          totalRevenue: { $sum: '$total' },
+          invoiceCount: { $sum: 1 },
+        },
+      },
+      { $sort: { totalRevenue: -1 } },
+      { $limit: parseInt(limit) },
+      {
+        $lookup: {
+          from: 'customers',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'customer',
+        },
+      },
+      { $unwind: '$customer' },
+      {
+        $project: {
+          _id: '$customer._id',
+          firstName: '$customer.firstName',
+          lastName: '$customer.lastName',
+          companyName: '$customer.companyName',
+          email: '$customer.email',
+          totalRevenue: 1,
+          invoiceCount: 1,
+        },
+      },
+    ]);
 
     res.json({
       success: true,
