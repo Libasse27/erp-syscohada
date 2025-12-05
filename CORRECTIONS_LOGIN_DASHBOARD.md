@@ -1,8 +1,34 @@
 # Corrections du flux Login → Dashboard
 
-## Date: 2024-12-04
+## Date: 2024-12-04 (Mise à jour: 2024-12-05)
 
 ## Problèmes Identifiés
+
+### 0. **⚠️ CRITIQUE: Token non sauvegardé après login/register**
+
+**Problème**: Le token était `undefined` dans toutes les requêtes API, causant des erreurs 401. Le backend rafraîchissait le token avec succès mais le frontend continuait à envoyer `undefined`.
+
+**Cause racine**: Le backend renvoie `{ success: true, data: { user, accessToken } }` mais le frontend cherchait `response.data.accessToken` directement au lieu de `response.data.data.accessToken`.
+
+**Fichiers affectés**:
+- `frontend/src/services/authService.js` - méthodes `login()`, `register()`, `refreshToken()`
+- `frontend/src/store/slices/authSlice.js` - actions `login`, `register`, `getMe`, `updateProfile`
+
+**Solution**:
+```javascript
+// authService.js
+const accessToken = response.data.data?.accessToken || response.data.accessToken;
+if (accessToken) {
+  localStorage.setItem('accessToken', accessToken);
+}
+
+// authSlice.js
+return response.data.data || response.data;
+```
+
+**Impact**: 🔴 BLOQUANT - Sans ce fix, aucune requête authentifiée ne fonctionne.
+
+---
 
 ### 1. **Incompatibilité des structures de données API**
 
