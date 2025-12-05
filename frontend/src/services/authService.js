@@ -14,9 +14,10 @@ const authService = {
   register: async (userData) => {
     const response = await api.post('/auth/register', userData);
 
-    // Sauvegarder le token d'accès
-    if (response.data.accessToken) {
-      localStorage.setItem('accessToken', response.data.accessToken);
+    // Sauvegarder le token d'accès (le backend renvoie data.accessToken)
+    const accessToken = response.data.data?.accessToken || response.data.accessToken;
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
     }
 
     return response;
@@ -30,9 +31,10 @@ const authService = {
   login: async (credentials) => {
     const response = await api.post('/auth/login', credentials);
 
-    // Sauvegarder le token d'accès
-    if (response.data.accessToken) {
-      localStorage.setItem('accessToken', response.data.accessToken);
+    // Sauvegarder le token d'accès (le backend renvoie data.accessToken)
+    const accessToken = response.data.data?.accessToken || response.data.accessToken;
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
     }
 
     return response;
@@ -58,9 +60,10 @@ const authService = {
   refreshToken: async () => {
     const response = await api.post('/auth/refresh');
 
-    // Sauvegarder le nouveau token d'accès
-    if (response.data.accessToken) {
-      localStorage.setItem('accessToken', response.data.accessToken);
+    // Sauvegarder le nouveau token d'accès (le backend renvoie data.accessToken)
+    const accessToken = response.data.data?.accessToken || response.data.accessToken;
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
     }
 
     return response;

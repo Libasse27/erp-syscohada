@@ -22,7 +22,8 @@ export const register = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authService.register(userData);
-      return response.data;
+      // Le backend renvoie { success, data: { user, accessToken } }
+      return response.data.data || response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error || 'Erreur lors de l\'inscription'
@@ -37,7 +38,8 @@ export const login = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       const response = await authService.login(credentials);
-      return response.data;
+      // Le backend renvoie { success, data: { user, accessToken } }
+      return response.data.data || response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error || 'Erreur lors de la connexion'
@@ -67,7 +69,8 @@ export const getMe = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await authService.getMe();
-      return response.data;
+      // Le backend renvoie { success, data: { user } }
+      return response.data.data || response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error || 'Erreur lors de la récupération du profil'
@@ -82,7 +85,8 @@ export const updateProfile = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await authService.updateProfile(userData);
-      return response.data;
+      // Le backend renvoie { success, data: { user } }
+      return response.data.data || response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.error || 'Erreur lors de la mise à jour du profil'
