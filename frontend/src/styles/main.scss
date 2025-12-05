@@ -13,6 +13,13 @@
 
 // 3. Styles de l'application
 @import './index.css'; // Styles globaux
-@import './layout.scss'; // Styles du layout (Header, Sidebar, Footer)
+@import './layout.scss'; // Styles du layout (ancien - peut être supprimé si non utilisé)
+
+// 4. Composants de layout
+@import './header.css'; // Styles du Header
+@import './sidebar.css'; // Styles de la Sidebar
+@import './footer.css'; // Styles du Footer
+
+// 5. Pages et modules
 @import './dashboard.css'; // Styles spécifiques au dashboard
-@import './compatibility.css'; // Styles de compatibilité (à charger en dernier si nécessaire)
+@import './compatibility.css'; // Styles de compatibilité Bootstrap/Tailwind (à charger en dernier)
