@@ -8,18 +8,6 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
-  FaShoppingCart,
-  FaFileInvoiceDollar,
-  FaBoxes,
-  FaUsers,
-  FaArrowUp,
-  FaArrowDown,
-  FaExclamationTriangle,
-  FaChartLine,
-  FaClock,
-  FaMoneyBillWave,
-} from 'react-icons/fa';
-import {
   fetchDashboardData,
   fetchSalesChart,
   setPeriod,
@@ -55,7 +43,7 @@ const Dashboard = () => {
 
   // ========== COMPOSANTS ==========
 
-  const StatCard = ({ title, value, icon: Icon, percentage, trend, color, link }) => (
+  const StatCard = ({ title, value, icon, percentage, trend, color, link }) => (
     <div className="col-md-6 col-xl-3 mb-4">
       <div className="card border-0 shadow-sm h-100">
         <div className="card-body">
@@ -68,7 +56,7 @@ const Dashboard = () => {
               {percentage !== undefined && (
                 <div className="mt-2">
                   <span className={`badge bg-${trend === 'up' ? 'success' : 'danger'} bg-opacity-10 text-${trend === 'up' ? 'success' : 'danger'}`}>
-                    {trend === 'up' ? <FaArrowUp size={10} /> : <FaArrowDown size={10} />}
+                    <i className={`bi bi-arrow-${trend === 'up' ? 'up' : 'down'}`} style={{ fontSize: '0.625rem' }}></i>
                     {' '}{Math.abs(percentage)}%
                   </span>
                   <small className="text-muted ms-2">vs mois dernier</small>
@@ -76,7 +64,7 @@ const Dashboard = () => {
               )}
             </div>
             <div className={`bg-${color} bg-opacity-10 p-3 rounded`}>
-              <Icon className={`text-${color}`} size={24} />
+              <i className={`bi bi-${icon} text-${color}`} style={{ fontSize: '1.5rem' }}></i>
             </div>
           </div>
           {link && (
@@ -101,7 +89,7 @@ const Dashboard = () => {
 
     return (
       <div className={`alert alert-${getAlertColor(alert.type)} d-flex align-items-center mb-2`} role="alert">
-        <FaExclamationTriangle className="me-2" />
+        <i className="bi bi-exclamation-triangle me-2"></i>
         <div className="flex-grow-1">
           <strong>{alert.title}</strong>
           <p className="mb-0 small">{alert.message}</p>
@@ -167,7 +155,7 @@ const Dashboard = () => {
         <StatCard
           title="Ventes"
           value={formatCurrency(stats.sales?.total || 0)}
-          icon={FaShoppingCart}
+          icon="cart-check"
           percentage={stats.sales?.percentage}
           trend={stats.sales?.trend}
           color="primary"
@@ -176,7 +164,7 @@ const Dashboard = () => {
         <StatCard
           title="Achats"
           value={formatCurrency(stats.purchases?.total || 0)}
-          icon={FaFileInvoiceDollar}
+          icon="receipt"
           percentage={stats.purchases?.percentage}
           trend={stats.purchases?.trend}
           color="success"
@@ -185,7 +173,7 @@ const Dashboard = () => {
         <StatCard
           title="Stock"
           value={formatNumber(stats.inventory?.total || 0)}
-          icon={FaBoxes}
+          icon="boxes"
           percentage={stats.inventory?.percentage}
           trend={stats.inventory?.trend}
           color="warning"
@@ -194,7 +182,7 @@ const Dashboard = () => {
         <StatCard
           title="Clients"
           value={formatNumber(stats.customers?.total || 0)}
-          icon={FaUsers}
+          icon="people"
           percentage={stats.customers?.percentage}
           trend={stats.customers?.trend}
           color="info"
@@ -209,7 +197,7 @@ const Dashboard = () => {
             <div className="card border-0 shadow-sm">
               <div className="card-header bg-white border-0">
                 <h5 className="mb-0">
-                  <FaExclamationTriangle className="text-warning me-2" />
+                  <i className="bi bi-exclamation-triangle text-warning me-2"></i>
                   Alertes ({alerts.length})
                 </h5>
               </div>
@@ -230,7 +218,7 @@ const Dashboard = () => {
           <div className="card border-0 shadow-sm h-100">
             <div className="card-header bg-white border-0">
               <h5 className="mb-0">
-                <FaChartLine className="text-primary me-2" />
+                <i className="bi bi-graph-up text-primary me-2"></i>
                 Évolution des ventes
               </h5>
             </div>
@@ -273,7 +261,7 @@ const Dashboard = () => {
           <div className="card border-0 shadow-sm h-100">
             <div className="card-header bg-white border-0">
               <h5 className="mb-0">
-                <FaClock className="text-info me-2" />
+                <i className="bi bi-clock-history text-info me-2"></i>
                 Activités récentes
               </h5>
             </div>
@@ -287,7 +275,7 @@ const Dashboard = () => {
                           <h6 className="mb-1 small">{activity.title}</h6>
                           <p className="mb-1 small text-muted">{activity.description}</p>
                           <small className="text-muted">
-                            <FaClock size={10} className="me-1" />
+                            <i className="bi bi-clock me-1" style={{ fontSize: '0.625rem' }}></i>
                             {formatDate(activity.date, 'datetime')}
                           </small>
                         </div>
@@ -312,7 +300,7 @@ const Dashboard = () => {
           <div className="card border-0 shadow-sm">
             <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
               <h5 className="mb-0">
-                <FaBoxes className="text-warning me-2" />
+                <i className="bi bi-box-seam text-warning me-2"></i>
                 Produits les plus vendus
               </h5>
               <Link to="/inventory/products" className="btn btn-sm btn-outline-primary">
@@ -336,7 +324,7 @@ const Dashboard = () => {
                           <td>
                             <div className="d-flex align-items-center">
                               <div className="bg-light rounded p-2 me-2">
-                                <FaBoxes className="text-muted" size={16} />
+                                <i className="bi bi-box text-muted"></i>
                               </div>
                               <div>
                                 <div className="fw-medium">{product.name}</div>
@@ -365,7 +353,7 @@ const Dashboard = () => {
           <div className="card border-0 shadow-sm">
             <div className="card-header bg-white border-0 d-flex justify-content-between align-items-center">
               <h5 className="mb-0">
-                <FaUsers className="text-info me-2" />
+                <i className="bi bi-people text-info me-2"></i>
                 Meilleurs clients
               </h5>
               <Link to="/sales/customers" className="btn btn-sm btn-outline-primary">
@@ -388,8 +376,8 @@ const Dashboard = () => {
                         <tr key={index}>
                           <td>
                             <div className="d-flex align-items-center">
-                              <div className="bg-light rounded-circle p-2 me-2" style={{ width: '40px', height: '40px' }}>
-                                <FaUsers className="text-muted" size={16} />
+                              <div className="bg-light rounded-circle p-2 me-2 d-flex align-items-center justify-content-center" style={{ width: '40px', height: '40px' }}>
+                                <i className="bi bi-person text-muted"></i>
                               </div>
                               <div>
                                 <div className="fw-medium">{customer.name}</div>
@@ -420,7 +408,7 @@ const Dashboard = () => {
           <div className="card border-0 shadow-sm">
             <div className="card-header bg-white border-0">
               <h5 className="mb-0">
-                <FaMoneyBillWave className="text-success me-2" />
+                <i className="bi bi-cash-stack text-success me-2"></i>
                 Indicateurs financiers
               </h5>
             </div>

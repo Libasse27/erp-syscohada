@@ -3,7 +3,7 @@
  * Gère le routing et la structure de l'application
  */
 
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import PrivateRoute from './components/PrivateRoute';
 import MainLayout from './components/layout/MainLayout';
@@ -57,18 +57,23 @@ function App() {
 
         {/* Route 404 - Page non trouvée */}
         <Route path="*" element={
-          <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-            <div className="text-center">
-              <h1 className="text-6xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
-              <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
-                Page non trouvée
+          <div className="min-vh-100 d-flex align-items-center justify-content-center bg-light">
+            <div className="text-center p-5">
+              <div className="mb-4">
+                <i className="bi bi-exclamation-triangle-fill text-warning" style={{ fontSize: '5rem' }}></i>
+              </div>
+              <h1 className="display-1 fw-bold text-dark mb-3">404</h1>
+              <h2 className="h4 text-muted mb-4">Page non trouvée</h2>
+              <p className="text-secondary mb-4">
+                La page que vous recherchez n'existe pas ou a été déplacée.
               </p>
-              <a
-                href={isAuthenticated ? "/dashboard" : "/login"}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              <Link
+                to={isAuthenticated ? "/dashboard" : "/login"}
+                className="btn btn-primary btn-lg d-inline-flex align-items-center gap-2"
               >
+                <i className="bi bi-house"></i>
                 Retour à l'accueil
-              </a>
+              </Link>
             </div>
           </div>
         } />
