@@ -3,7 +3,7 @@
  * Affiche les liens de navigation principaux et sous-menus
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
@@ -30,55 +30,55 @@ const Sidebar = () => {
       title: 'Ventes',
       icon: 'bi-cart-check',
       children: [
-        { title: 'Factures', path: '/invoices', icon: '📄' },
-        { title: 'Devis', path: '/quotes', icon: '📋' },
-        { title: 'Clients', path: '/customers', icon: '👥' },
+        { title: 'Factures', path: '/dashboard/sales/invoices', icon: '📄' },
+        { title: 'Devis', path: '/dashboard/sales/quotes', icon: '📋' },
+        { title: 'Clients', path: '/dashboard/sales/customers', icon: '👥' },
       ],
     },
     {
       title: 'Achats',
       icon: 'bi-basket',
       children: [
-        { title: 'Commandes', path: '/purchase-orders', icon: '📦' },
-        { title: 'Fournisseurs', path: '/suppliers', icon: '🏭' },
+        { title: 'Commandes', path: '/dashboard/purchases/orders', icon: '📦' },
+        { title: 'Fournisseurs', path: '/dashboard/purchases/suppliers', icon: '🏭' },
       ],
     },
     {
       title: 'Produits',
       icon: 'bi-box-seam',
-      path: '/products',
+      path: '/dashboard/inventory/products',
     },
     {
       title: 'Stock',
       icon: 'bi-boxes',
       children: [
-        { title: 'Mouvements', path: '/stock/movements', icon: '↔️' },
-        { title: 'Inventaire', path: '/stock/inventory', icon: '📊' },
+        { title: 'Mouvements', path: '/dashboard/inventory/movements', icon: '↔️' },
+        { title: 'Inventaire', path: '/dashboard/inventory/stock', icon: '📊' },
       ],
     },
     {
       title: 'Comptabilité',
       icon: 'bi-calculator',
       children: [
-        { title: 'Comptes', path: '/accounts', icon: '💰' },
-        { title: 'Écritures', path: '/entries', icon: '✍️' },
-        { title: 'Grand livre', path: '/ledger', icon: '📖' },
-        { title: 'Balance', path: '/balance', icon: '⚖️' },
+        { title: 'Comptes', path: '/dashboard/accounting/accounts', icon: '💰' },
+        { title: 'Écritures', path: '/dashboard/accounting/entries', icon: '✍️' },
+        { title: 'Grand livre', path: '/dashboard/accounting/ledger', icon: '📖' },
+        { title: 'Balance', path: '/dashboard/accounting/balance', icon: '⚖️' },
       ],
     },
     {
       title: 'Paiements',
       icon: 'bi-credit-card',
-      path: '/payments',
+      path: '/dashboard/treasury/payments',
     },
     {
       title: 'Rapports',
       icon: 'bi-graph-up',
       children: [
-        { title: 'Ventes', path: '/reports/sales', icon: '📈' },
-        { title: 'Achats', path: '/reports/purchases', icon: '📉' },
-        { title: 'Trésorerie', path: '/reports/cash-flow', icon: '💵' },
-        { title: 'Bilan', path: '/reports/balance-sheet', icon: '📊' },
+        { title: 'Ventes', path: '/dashboard/reports/sales', icon: '📈' },
+        { title: 'Achats', path: '/dashboard/reports/purchases', icon: '📉' },
+        { title: 'Trésorerie', path: '/dashboard/reports/treasury', icon: '💵' },
+        { title: 'Bilan', path: '/dashboard/reports/balance-sheet', icon: '📊' },
       ],
     },
   ];
@@ -126,10 +126,17 @@ const Sidebar = () => {
     const hasChildren = item.children && item.children.length > 0;
     const isActive = location.pathname === item.path;
     const isParentActive =
-      hasChildren && item.children.some((child) => location.pathname === child.path);
+      hasChildren && item.children.some((child) => location.pathname.startsWith(child.path));
 
     // État local pour l'ouverture du sous-menu
     const [isOpen, setIsOpen] = useState(isParentActive);
+
+    // Ouvrir automatiquement si un enfant est actif
+    useEffect(() => {
+      if (isParentActive && !sidebarCollapsed) {
+        setIsOpen(true);
+      }
+    }, [isParentActive, sidebarCollapsed]);
 
     // Gérer les items avec sous-menus
     if (hasChildren) {
@@ -138,7 +145,7 @@ const Sidebar = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={`sidebar-menu-link ${isParentActive ? 'active' : ''} ${isOpen ? 'open' : ''}`}
-            data-tooltip={item.title}
+            data-tooltip={sidebarCollapsed ? item.title : ''}
           >
             <span className="sidebar-menu-icon">
               <i className={item.icon}></i>
@@ -191,7 +198,7 @@ const Sidebar = () => {
           className={({ isActive }) =>
             `sidebar-menu-link ${isActive ? 'active' : ''}`
           }
-          data-tooltip={item.title}
+          data-tooltip={sidebarCollapsed ? item.title : ''}
         >
           <span className="sidebar-menu-icon">
             <i className={item.icon}></i>
@@ -221,14 +228,14 @@ const Sidebar = () => {
       >
         {/* Sidebar header */}
         <div className="sidebar-header">
-          <a href="/dashboard" className="sidebar-header-brand">
+          <NavLink to="/dashboard" className="sidebar-header-brand">
             <div className="sidebar-header-icon">E</div>
             <span className="sidebar-header-text">ERP SYSCOHADA</span>
-          </a>
+          </NavLink>
           <button
             onClick={() => dispatch(toggleSidebar())}
             className="sidebar-toggle-btn"
-            aria-label="Toggle sidebar"
+            aria-label="Fermer le menu"
           >
             <i className="bi bi-x"></i>
           </button>
@@ -254,7 +261,7 @@ const Sidebar = () => {
           <ul className="sidebar-menu">
             <li className="sidebar-menu-item">
               <NavLink
-                to="/settings"
+                to="/dashboard/settings"
                 onClick={() => {
                   if (window.innerWidth < 1024) {
                     dispatch(toggleSidebar());
@@ -263,7 +270,7 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `sidebar-menu-link ${isActive ? 'active' : ''}`
                 }
-                data-tooltip="Paramètres"
+                data-tooltip={sidebarCollapsed ? 'Paramètres' : ''}
               >
                 <span className="sidebar-menu-icon">
                   <i className="bi bi-gear"></i>
@@ -273,7 +280,7 @@ const Sidebar = () => {
             </li>
             <li className="sidebar-menu-item">
               <NavLink
-                to="/help"
+                to="/dashboard/help"
                 onClick={() => {
                   if (window.innerWidth < 1024) {
                     dispatch(toggleSidebar());
@@ -282,7 +289,7 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `sidebar-menu-link ${isActive ? 'active' : ''}`
                 }
-                data-tooltip="Aide"
+                data-tooltip={sidebarCollapsed ? 'Aide' : ''}
               >
                 <span className="sidebar-menu-icon">
                   <i className="bi bi-question-circle"></i>
@@ -295,16 +302,26 @@ const Sidebar = () => {
 
         {/* Sidebar footer */}
         <div className="sidebar-footer">
-          <div className="sidebar-footer-user">
-            <div className="sidebar-footer-avatar">
-              {getUserInitials()}
+          {!sidebarCollapsed ? (
+            <>
+              <div className="sidebar-footer-user">
+                <div className="sidebar-footer-avatar">
+                  {getUserInitials()}
+                </div>
+                <div className="sidebar-footer-info">
+                  <span className="sidebar-footer-name">{getUserName()}</span>
+                  <span className="sidebar-footer-role">{getUserRole()}</span>
+                </div>
+              </div>
+              <div className="sidebar-version">v1.0.0</div>
+            </>
+          ) : (
+            <div className="sidebar-footer-collapsed">
+              <div className="sidebar-footer-avatar" data-tooltip={getUserName()}>
+                {getUserInitials()}
+              </div>
             </div>
-            <div className="sidebar-footer-info">
-              <span className="sidebar-footer-name">{getUserName()}</span>
-              <span className="sidebar-footer-role">{getUserRole()}</span>
-            </div>
-          </div>
-          <div className="sidebar-version">v1.0.0</div>
+          )}
         </div>
       </aside>
     </>
